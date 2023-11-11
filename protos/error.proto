@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+enum ErrorCode {
+    NOT_EXISTS = 0;
+    SERVER_ERROR = 1;
+    VALIDATION_ERROR = 2;
+    UPLOAD_ERROR = 3;
+    NO_AUTH = 4;
+}
+
+message ErrorItem {
+  string path = 2;
+  optional string message = 3;
+}
+
+message ErrorResponse {
+  ErrorCode code = 1;
+  string message = 2;
+  repeated ErrorItem errors = 3;
+  map<string, string> params = 4;
+}

@@ -1,0 +1,34 @@
+static.memology.animaru.app {
+	header Server "VK Hackathon"
+	header Cache-Control "max-age=86400" # keep 1 day in cache
+	encode gzip
+
+	root * /root/memology-backend/files
+	@thumbnail {
+		path_regexp thumb /.+\.(jpg|jpeg|png|gif|bmp|tif|tiff|webp)$
+		query w=*
+		query h=*
+	}
+
+	image_filter @thumbnail {
+		fit {query.w} {query.h}
+	}
+	file_server
+}
+
+memology.animaru.app {
+	header Server "VK Hackathon"
+	reverse_proxy http://localhost:9123 {
+		header_up Host {upstream_hostport}
+	}
+	handle_errors {
+		@502 expression `{err.status_code} == 502`
+		handle @502 {
+			header Content-Type application/json
+			respond ` {
+				"code": "SERVER_MAINTENANCE",
+				"message": "На сервере проходит техническое обслуживание. Пожалуйста, подождите"
+			}			`
+		}
+	}
+}

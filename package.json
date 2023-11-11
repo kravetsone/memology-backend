@@ -1,0 +1,47 @@
+{
+    "name": "memology-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "author": "kravets",
+    "license": "ISC",
+    "scripts": {
+        "watch": "tsc-watch --onSuccess \"npm run tests\"",
+        "start": "tsc-alias && node dist/index.js --enable-source-maps",
+        "tests": "tsc-alias && npm run restart",
+        "restart": "pm2 restart memology && pm2 log memology",
+        "prod": "npm run build && npm run restart",
+        "build": "tsc && tsc-alias",
+        "lint": "eslint \"src/**/*.{js,ts}\"",
+        "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
+        "proto": "npx protoc --ts_out src/services/protobuf --ts_opt eslint_disable --proto_path protos error.proto user.proto meme.proto"
+    },
+    "dependencies": {
+        "@fastify/cors": "^8.4.0",
+        "@fastify/redis": "^6.1.1",
+        "@fastify/swagger": "^8.12.0",
+        "@fastify/swagger-ui": "^1.10.1",
+        "@prisma/client": "^5.5.2",
+        "@protobuf-ts/plugin": "^2.9.1",
+        "fastify": "^4.24.3",
+        "fastify-multer": "^2.0.3",
+        "fastify-plugin": "^4.5.1",
+        "fastify-type-provider-zod": "^1.1.9",
+        "glob": "^10.3.10",
+        "pg": "^8.11.3",
+        "swagger-themes": "^1.2.30",
+        "vk-io": "^4.8.3",
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "eslint": "^8.52.0",
+        "eslint-kit": "^10.5.2",
+        "nodemon": "^3.0.1",
+        "prettier": "^3.0.3",
+        "prisma": "^5.5.2",
+        "ts-node": "^10.9.1",
+        "tsc-alias": "^1.8.8",
+        "tsc-watch": "^6.0.4",
+        "typescript": "^5.2.2"
+    }
+}

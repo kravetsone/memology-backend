@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "CommonJS",
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "allowJs": true,
+        "declaration": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": false,
+        "moduleResolution":"node",
+        "removeComments": true,
+        "baseUrl": "./src",
+        "strictNullChecks": true,
+        "paths": {
+            "@types": ["types"],
+            "@db": ["db"],
+            "@db/*": ["db/*"],
+            "@helpers": ["helpers"],
+            "@config": ["config.ts"],
+            "@services/plugins/*": ["services/plugins/*"],
+            "@services/*": ["services/*"],
+            "@services": ["services/index.ts"],
+            
+        }
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+}

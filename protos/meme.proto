@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message MemeItem {
+    uint32 id = 1;
+    string title = 2;
+    string image = 3;
+    optional string description = 4;
+    uint32 favoritesCount = 5;
+    bool isFavorites = 6;
+    int32 likesCount = 7;
+}
+
+message MemeListResponse {
+    uint32 count = 1;
+    repeated MemeItem items = 2;
+  }
