@@ -14,7 +14,7 @@
         "build": "tsc && tsc-alias",
         "lint": "eslint \"src/**/*.{js,ts}\"",
         "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
-        "proto": "npx protoc --ts_out src/services/protobuf --ts_opt eslint_disable --proto_path protos error.proto user.proto meme.proto"
+        "proto": "npx protoc --ts_out src/services/protobuf --ts_opt eslint_disable --proto_path protos error.proto user.proto meme.proto rating.proto"
     },
     "dependencies": {
         "@fastify/cors": "^8.4.0",

@@ -15,6 +15,9 @@ export const get = async (fastify: FastifyZodInstance) => {
             const [memes, count] = await prisma.meme.findManyAndCount({
                 skip: (+page - 1) * +pageSize,
                 take: pageSize,
+                orderBy: {
+                    updatedAt: "asc",
+                },
                 select: {
                     id: true,
                     description: true,
@@ -30,6 +33,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                     _count: {
                         select: {
                             inFavorites: true,
+                            inLikes: true,
+                            inDislikes: true,
                         },
                     },
                 },
@@ -45,8 +50,10 @@ export const get = async (fastify: FastifyZodInstance) => {
                         image: meme.image,
                         favoritesCount: meme._count.inFavorites,
                         isFavorites: !!meme.inFavorites,
-                        //TODO: implement
-                        likesCount: 0,
+                        likesCount:
+                            meme._count.inLikes > meme._count.inDislikes
+                                ? meme._count.inLikes - meme._count.inDislikes
+                                : meme._count.inDislikes - meme._count.inLikes,
                     })),
                 }),
             );

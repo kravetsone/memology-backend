@@ -1,7 +1,7 @@
-import "@fastify/jwt";
 import {
     FastifyBaseLogger,
     FastifyInstance,
+    FastifyReply,
     RawReplyDefaultExpression,
     RawRequestDefaultExpression,
     RawServerDefault,
@@ -18,18 +18,6 @@ export type FastifyZodInstance = FastifyInstance<
     ZodTypeProvider
 >;
 
-declare module "@fastify/jwt" {
-    interface FastifyJWT {
-        payload: {
-            id: number;
-            deviceId?: string;
-        };
-        jwtUser: {
-            id: number;
-            deviceId?: string;
-        };
-    }
-}
 declare module "fastify" {
     interface PassportUser {
         token: string;
@@ -64,4 +52,9 @@ export interface IVKParams {
     vk_ts: string;
     vk_user_id: string;
     sign: string;
+}
+
+export enum RatingType {
+    WEEK,
+    ETERNAL,
 }
