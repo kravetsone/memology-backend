@@ -25,6 +25,9 @@ model Meme {
   image       String
   description String?
 
+  isSuggest  Boolean @default(true)
+  likesCount Int     @default(0)
+
   inFavorites Favorite[]
   inLikes     Like[]
   inDislikes  Dislike[]
@@ -41,6 +44,8 @@ model Favorite {
 
   meme   Meme @relation(fields: [memeId], references: [id])
   memeId Int
+
+  createdAt DateTime @default(now())
 }
 
 model Like {
@@ -51,6 +56,8 @@ model Like {
 
   meme   Meme @relation(fields: [memeId], references: [id])
   memeId Int
+
+  createdAt DateTime @default(now())
 }
 
 model Dislike {
@@ -61,4 +68,6 @@ model Dislike {
 
   meme   Meme @relation(fields: [memeId], references: [id])
   memeId Int
+
+  createdAt DateTime @default(now())
 }

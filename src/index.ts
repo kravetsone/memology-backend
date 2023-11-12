@@ -1,5 +1,6 @@
 import "./types/index";
 import { prisma } from "@db";
+import { ajvFilePlugin } from "@fastify/multipart";
 import { PORT } from "config";
 import Fastify from "fastify";
 import { registerPlugin } from "services/plugins";
@@ -7,6 +8,9 @@ import { registerPlugin } from "services/plugins";
 const fastify = Fastify({
     logger: {
         level: "warn",
+    },
+    ajv: {
+        plugins: [ajvFilePlugin],
     },
 });
 

@@ -23,6 +23,7 @@ export const memeModelExtension = {
                     skip: (+page - 1) * +pageSize,
                     take: pageSize,
                     where: {
+                        isSuggest: false,
                         OR: [
                             {
                                 title: {
