@@ -10,11 +10,27 @@ export const get = async (fastify: FastifyZodInstance) => {
             schema,
         },
         async (req, res) => {
-            const { page, pageSize } = req.query;
+            const { page, pageSize, query } = req.query;
 
             const [memes, count] = await prisma.meme.findManyAndCount({
                 skip: (+page - 1) * +pageSize,
                 take: pageSize,
+                where: {
+                    OR: [
+                        {
+                            title: {
+                                contains: query,
+                                mode: "insensitive",
+                            },
+                        },
+                        {
+                            description: {
+                                contains: query,
+                                mode: "insensitive",
+                            },
+                        },
+                    ],
+                },
                 orderBy: {
                     updatedAt: "asc",
                 },

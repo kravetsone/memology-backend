@@ -13,4 +13,4 @@ message MemeItem {
 message MemeListResponse {
     uint32 count = 1;
     repeated MemeItem items = 2;
-  }
+}
