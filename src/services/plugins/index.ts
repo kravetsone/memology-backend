@@ -1,4 +1,5 @@
 import { config } from "@config";
+import { ErrorCode, websocketPlugin } from "@services";
 import { APIError } from "@services/errors";
 import { FastifyZodInstance, IVKParams } from "@types";
 import { FastifyRequest } from "fastify";
@@ -9,7 +10,6 @@ import {
 } from "fastify-type-provider-zod";
 import crypto from "node:crypto";
 import querystring from "node:querystring";
-import { ErrorCode } from "..";
 import { autoroutesPlugin } from "./autoroutes";
 import { errorHandlerPlugin } from "./errorHandler";
 import { othersPlugin } from "./others";
@@ -19,6 +19,7 @@ async function registerPlugins(fastify: FastifyZodInstance) {
     fastify.setValidatorCompiler(validatorCompiler);
     fastify.setSerializerCompiler(serializerCompiler);
 
+    await fastify.register(websocketPlugin);
     await fastify.register(othersPlugin);
     await fastify.register(swaggerPlugin);
     await fastify.register(errorHandlerPlugin);
