@@ -8,7 +8,6 @@ async function registerAutoroutes(fastify: FastifyZodInstance) {
     });
     await Promise.all(
         routes.map(async (route) => {
-            route = route.replaceAll("\\", "/");
             if (route.includes("ignore")) return;
             const file = await import(route);
             const endpoint = Object.values(file).at(0);

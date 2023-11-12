@@ -1,5 +1,4 @@
 import { prisma } from "@db/prisma";
-import { Prisma, User } from "@prisma/client";
 import { vk } from "@services/vk-io";
 
 export const signInOrUpExtension = {

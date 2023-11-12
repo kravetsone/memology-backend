@@ -8,6 +8,7 @@ const querystring = z.object({
 
 export const schema = {
     description: "Получение списка мемов",
-    tags: ["app"],
+    tags: ["meme"],
     querystring,
+    security: [{ vkAuth: [] }],
 };

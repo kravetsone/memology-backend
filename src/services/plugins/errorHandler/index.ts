@@ -5,11 +5,8 @@ import fastifyPlugin from "fastify-plugin";
 
 async function registerErrorHandler(fastify: FastifyZodInstance) {
     fastify.setErrorHandler((error, _req, res) => {
-        console.error("err:", error);
-
         if (error instanceof APIError) {
             const apiError = error as APIError;
-            // res.send(1);
             return (
                 res
                     // .header("Content-Type", "application/x-protobuf")
@@ -29,7 +26,7 @@ async function registerErrorHandler(fastify: FastifyZodInstance) {
                         params: {},
                     }),
                 );
-
+        console.error("err:", error);
         if (error?.validation?.length) {
             return res
                 .status(400)

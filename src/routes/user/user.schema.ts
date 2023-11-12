@@ -1,4 +1,5 @@
 export const schema = {
-    description: "Получение **информации** о приложении",
-    tags: ["app"],
+    description: "Получение информации о пользователе",
+    tags: ["user"],
+    security: [{ vkAuth: [] }],
 };

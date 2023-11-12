@@ -24,12 +24,11 @@ export async function registerSwagger(fastify: FastifyZodInstance) {
             ],
             components: {
                 securitySchemes: {
-                    bearerAuth: {
-                        name: "Authorization",
+                    vkAuth: {
+                        name: "vk-params",
                         in: "header",
                         type: "apiKey",
-                        description:
-                            "JWT Authorization header (don't forget Bearer)",
+                        description: "some vk params",
                     },
                 },
             },
