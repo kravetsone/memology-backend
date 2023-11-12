@@ -12,48 +12,10 @@ export const get = async (fastify: FastifyZodInstance) => {
         async (req, res) => {
             const { page, pageSize, query } = req.query;
 
-            const [memes, count] = await prisma.meme.findManyAndCount({
-                skip: (+page - 1) * +pageSize,
-                take: pageSize,
-                where: {
-                    OR: [
-                        {
-                            title: {
-                                contains: query,
-                                mode: "insensitive",
-                            },
-                        },
-                        {
-                            description: {
-                                contains: query,
-                                mode: "insensitive",
-                            },
-                        },
-                    ],
-                },
-                orderBy: {
-                    updatedAt: "asc",
-                },
-                select: {
-                    id: true,
-                    description: true,
-                    title: true,
-                    image: true,
-                    inFavorites: {
-                        where: {
-                            user: {
-                                vkId: +req.vkParams.vk_user_id,
-                            },
-                        },
-                    },
-                    _count: {
-                        select: {
-                            inFavorites: true,
-                            inLikes: true,
-                            inDislikes: true,
-                        },
-                    },
-                },
+            const [memes, count] = await prisma.meme.getList(query, {
+                page,
+                pageSize,
+                vkId: +req.vkParams.vk_user_id,
             });
             console.log(memes, count);
             return res.header("content-type", "application/x-protobuf").send(
