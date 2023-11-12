@@ -4,5 +4,8 @@ message UserResponse {
     message UserItem {
         uint32 id = 1;
         string name = 2;
+        uint32 likesCount = 3;
+        uint32 dislikesCount = 4;
+        uint32 favoritesCount = 5;
     }
 }

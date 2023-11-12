@@ -10,6 +10,18 @@ export const signInOrUpExtension = {
                     where: {
                         vkId,
                     },
+                    select: {
+                        id: true,
+                        name: true,
+                        vkId: true,
+                        _count: {
+                            select: {
+                                likes: true,
+                                dislikes: true,
+                                favorites: true,
+                            },
+                        },
+                    },
                 });
 
                 if (!user) {
@@ -21,6 +33,18 @@ export const signInOrUpExtension = {
                         data: {
                             vkId,
                             name: `${vkUser.first_name} ${vkUser.last_name}`,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            vkId: true,
+                            _count: {
+                                select: {
+                                    likes: true,
+                                    dislikes: true,
+                                    favorites: true,
+                                },
+                            },
                         },
                     });
 
