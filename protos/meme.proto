@@ -22,7 +22,7 @@ message MemeResponse {
     optional string description = 4;
     uint32 favoritesCount = 5;
     bool isFavorites = 6;
-    uint32 likesCount = 7;
+    int32 likesCount = 7;
     uint32 commentsCount = 8;
     uint32 ownerId = 9;
     optional Mark mark = 10;

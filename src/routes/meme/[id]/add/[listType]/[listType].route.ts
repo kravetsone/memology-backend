@@ -13,34 +13,31 @@ export const get = async (fastify: FastifyZodInstance) => {
         async (req, res) => {
             const { listType, id } = req.params;
 
-            const user = await prisma.user.findUniqueOrThrow({
-                where: {
-                    vkId: +req.vkParams.vk_user_id,
-                },
-            });
+            const vkId = +req.vkParams.vk_user_id;
 
             const meme = await prisma.meme.findUnique({
                 where: { id },
                 select: {
                     id: true,
+                    likesCount: true,
                     inFavorites: {
                         where: {
                             user: {
-                                vkId: user.vkId,
+                                vkId,
                             },
                         },
                     },
                     inLikes: {
                         where: {
                             user: {
-                                vkId: user.vkId,
+                                vkId,
                             },
                         },
                     },
                     inDislikes: {
                         where: {
                             user: {
-                                vkId: user.vkId,
+                                vkId,
                             },
                         },
                     },
@@ -53,8 +50,9 @@ export const get = async (fastify: FastifyZodInstance) => {
                 );
 
             await prisma.meme.addTo(listType, {
-                user,
+                vkId,
                 memeId: meme.id,
+                likesCount: meme.likesCount,
                 inDislikes: meme.inDislikes.at(0),
                 inLikes: meme.inLikes.at(0),
                 inFavorites: meme.inFavorites.at(0),

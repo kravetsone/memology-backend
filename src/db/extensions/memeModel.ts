@@ -8,6 +8,17 @@ export interface IListItem {
     userId: number;
 }
 
+async function setLikes(memeId: number, likesCount: number) {
+    return prisma.meme.update({
+        where: {
+            id: memeId,
+        },
+        data: {
+            likesCount,
+        },
+    });
+}
+
 export const memeModelExtension = {
     model: {
         meme: {
@@ -15,24 +26,28 @@ export const memeModelExtension = {
             async addTo(
                 type: ListType,
                 {
-                    user,
+                    vkId,
                     memeId,
+                    likesCount,
                     inLikes,
                     inDislikes,
                     inFavorites,
                 }: {
-                    user: User;
+                    vkId: number;
                     memeId: number;
+                    likesCount: number;
                     inLikes?: IListItem;
                     inDislikes?: IListItem;
                     inFavorites?: IListItem;
                 },
             ) {
+                console.log(type);
+
                 const data: Parameters<typeof prisma.like.create>[0] = {
                     data: {
                         user: {
                             connect: {
-                                id: user.id,
+                                vkId,
                             },
                         },
                         meme: {
@@ -49,18 +64,24 @@ export const memeModelExtension = {
                                 id: inDislikes.id,
                             },
                         });
+                        await setLikes(memeId, likesCount + 2);
+                        return prisma.like.create(data);
                     }
                     if (inLikes) {
+                        await setLikes(memeId, likesCount - 1);
                         return prisma.like.delete({
                             where: {
                                 id: inLikes.id,
                             },
                         });
                     }
+
+                    await setLikes(memeId, likesCount + 1);
                     return prisma.like.create(data);
                 }
                 if (type === ListType.DISLIKE) {
                     if (inDislikes) {
+                        await setLikes(memeId, likesCount + 1);
                         return prisma.dislike.delete({
                             where: {
                                 id: inDislikes.id,
@@ -73,7 +94,11 @@ export const memeModelExtension = {
                                 id: inLikes.id,
                             },
                         });
+                        await setLikes(memeId, likesCount - 2);
+                        return prisma.dislike.create(data);
                     }
+
+                    await setLikes(memeId, likesCount - 1);
                     return prisma.dislike.create(data);
                 }
 
