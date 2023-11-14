@@ -7,7 +7,7 @@ const params = z.object({
 });
 
 export const schema = {
-    description: "Получение мема",
+    description: "Добавление мема в определённый список",
     tags: ["meme"],
     params,
     security: [{ vkAuth: [] }],
