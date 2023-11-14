@@ -6,7 +6,6 @@ import {
     RawRequestDefaultExpression,
     RawServerDefault,
 } from "fastify";
-import { File } from "fastify-multer/lib/interfaces";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { ZodError } from "zod";
 
@@ -31,7 +30,6 @@ declare module "fastify" {
         ) => (req: FastifyRequest, res: FastifyReply) => void;
     }
     interface FastifyRequest {
-        file?: File;
         vkParams: IVKParams;
     }
 
@@ -55,6 +53,12 @@ export interface IVKParams {
 }
 
 export enum RatingType {
-    WEEK,
-    ETERNAL,
+    WEEKLY = "WEEKLY",
+    ETERNAL = "ETERNAL",
+}
+
+export enum ListType {
+    LIKE = "like",
+    DISLIKE = "dislike",
+    FAVORITE = "favorite",
 }
