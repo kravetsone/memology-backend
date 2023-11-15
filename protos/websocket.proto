@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+enum Command {
+    CONNECTION = 0;
+}
+
+message WebsocketCommand {
+    Command command = 1;
+}
+
+enum WebsocketEvent {
+    ERROR = 0;
+}
+
+enum WebsocketErrorType {
+    NO_GAME = 0;
+    NO_COMMAND = 1;
+}
+
+message WebsocketError {
+    WebsocketErrorType type = 1;
+    string message = 2;
+}
+
+message WebsocketResponse {
+    WebsocketEvent type = 1;
+    optional WebsocketError error = 2;
+    optional PhoneGameData phone = 3;
+}
+
+message PhoneGameData {
+
+}
