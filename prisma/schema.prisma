@@ -17,6 +17,7 @@ model User {
   likes     Like[]
   dislikes  Dislike[]
   comments  Comment[]
+  memes     Meme[]
 }
 
 model Meme {
@@ -33,6 +34,9 @@ model Meme {
   inLikes     Like[]
   inDislikes  Dislike[]
   comments    Comment[]
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
