@@ -26,27 +26,35 @@ export const get = async (fastify: FastifyZodInstance) => {
                     id: true,
                     text: true,
                     createdAt: true,
-                    meme: {
+
+                    user: {
                         select: {
-                            inLikes: {
-                                where: {
-                                    user: {
-                                        vkId: +req.vkParams.vk_user_id,
-                                    },
-                                },
-                            },
-                            inDislikes: {
-                                where: {
-                                    user: {
-                                        vkId: +req.vkParams.vk_user_id,
-                                    },
+                            id: true,
+                            vkId: true,
+                        },
+                    },
+                },
+            });
+            const userIds = comments.map((x) => x.user.vkId);
+
+            const { inLikes, inDislikes } = await prisma.meme.findFirstOrThrow({
+                select: {
+                    inLikes: {
+                        where: {
+                            user: {
+                                vkId: {
+                                    in: userIds,
                                 },
                             },
                         },
                     },
-                    user: {
-                        select: {
-                            vkId: true,
+                    inDislikes: {
+                        where: {
+                            user: {
+                                vkId: {
+                                    in: userIds,
+                                },
+                            },
                         },
                     },
                 },
@@ -64,11 +72,13 @@ export const get = async (fastify: FastifyZodInstance) => {
                             comment.createdAt,
                         ).toUnixInteger(),
                         likesCount: 0,
-                        mark: comment.meme.inLikes.length
+                        mark: inLikes.find((x) => x.userId === comment.user.id)
                             ? Mark.LIKE
-                            : (comment.meme.inDislikes.length
+                            : inDislikes.find(
+                                  (x) => x.userId === comment.user.id,
+                              )
                             ? Mark.DISLIKE
-                            : undefined),
+                            : undefined,
                     })),
                 }),
             );
