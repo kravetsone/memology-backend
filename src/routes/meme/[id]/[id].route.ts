@@ -17,7 +17,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             if (!meme)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этого мема не существует"
+                    "Этого мема не существует",
                 );
             console.log(meme);
 
@@ -35,10 +35,10 @@ export const get = async (fastify: FastifyZodInstance) => {
                     mark: meme.inLikes.length
                         ? Mark.LIKE
                         : meme.inDislikes.length
-                        ? Mark.DISLIKE
-                        : undefined,
-                })
+                          ? Mark.DISLIKE
+                          : undefined,
+                }),
             );
-        }
+        },
     );
 };

@@ -82,8 +82,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                         isFavorites: !!meme.inFavorites.length,
                         likesCount: meme.likesCount,
                     })),
-                })
+                }),
             );
-        }
+        },
     );
 };

@@ -39,7 +39,7 @@ export const memeModelExtension = {
                     inLikes?: IListItem;
                     inDislikes?: IListItem;
                     inFavorites?: IListItem;
-                }
+                },
             ) {
                 console.log(type);
 
@@ -168,10 +168,10 @@ export const memeModelExtension = {
                     page: number;
                     pageSize: number;
                     vkId: number;
-                }
+                },
             ) {
                 const context = Prisma.getExtensionContext(
-                    this
+                    this,
                 ) as typeof prisma.meme;
 
                 return context.findManyAndCount({

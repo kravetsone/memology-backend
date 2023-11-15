@@ -75,10 +75,10 @@ export const get = async (fastify: FastifyZodInstance) => {
                         mark: inLikes.find((x) => x.userId === comment.user.id)
                             ? Mark.LIKE
                             : inDislikes.find(
-                                  (x) => x.userId === comment.user.id,
-                              )
-                            ? Mark.DISLIKE
-                            : undefined,
+                                    (x) => x.userId === comment.user.id,
+                                )
+                              ? Mark.DISLIKE
+                              : undefined,
                     })),
                 }),
             );

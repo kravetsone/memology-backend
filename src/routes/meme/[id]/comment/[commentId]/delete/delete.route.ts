@@ -24,7 +24,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             if (!comment)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этого комментария не существует или он не принадлежит вам"
+                    "Этого комментария не существует или он не принадлежит вам",
                 );
 
             await prisma.comment.delete({
@@ -34,6 +34,6 @@ export const get = async (fastify: FastifyZodInstance) => {
             });
 
             return res.header("content-type", "application/x-protobuf").send();
-        }
+        },
     );
 };
