@@ -1,3 +1,4 @@
+import { WebsocketServer } from "@services/protobuf";
 import {
     FastifyBaseLogger,
     FastifyInstance,
@@ -61,4 +62,8 @@ export enum ListType {
     LIKE = "like",
     DISLIKE = "dislike",
     FAVORITE = "favorite",
+}
+
+export interface ICustomMethod {
+    send: (msg: WebsocketServer[keyof WebsocketServer]) => void;
 }

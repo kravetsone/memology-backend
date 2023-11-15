@@ -1,11 +1,16 @@
 syntax = "proto3";
 
-enum Command {
-    CONNECTION = 0;
+message Smm {
+    uint32 userId =  1;
 }
 
-message WebsocketCommand {
-    Command command = 1;
+message WebsocketClient {
+    message HistoryCommand {
+        string test = 1;
+        Smm test2 = 2;
+    }
+
+    HistoryCommand history = 1;
 }
 
 enum WebsocketEvent {
@@ -19,15 +24,17 @@ enum WebsocketErrorType {
 
 message WebsocketError {
     WebsocketErrorType type = 1;
-    string message = 2;
+    optional string message = 2;
 }
 
-message WebsocketResponse {
-    WebsocketEvent type = 1;
-    optional WebsocketError error = 2;
-    optional PhoneGameData phone = 3;
-}
+message WebsocketServer {
+    message HistoryEvents {
+        message UserJoined {
+            uint32 vkId = 1;
+        }
 
-message PhoneGameData {
+        UserJoined user_joined = 1;
+    }
 
+    HistoryEvents history = 1;
 }

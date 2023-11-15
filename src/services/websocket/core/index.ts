@@ -4,7 +4,8 @@ import { SocketCommand } from "./socketCommand";
 export * from "./socketCommand";
 
 export class SocketManager {
-    commands: SocketCommand[];
+    commands: SocketCommand<any, any>[];
+
     constructor() {
         this.commands = [];
     }
@@ -20,12 +21,15 @@ export class SocketManager {
                 paths.map(async (path) => {
                     const file = await import(path);
 
-                    const command = file[Object.keys(file)[0]] as SocketCommand;
+                    const command = file[Object.keys(file)[0]] as SocketCommand<
+                        any,
+                        any
+                    >;
                     command.game = path.split("/").at(7)!;
 
                     this.commands.push(command);
                 });
-            }
+            },
         );
     }
 }

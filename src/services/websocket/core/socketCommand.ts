@@ -1,37 +1,31 @@
-import { User } from "@db";
 import { SocketStream } from "@fastify/websocket";
-import { Command, WebsocketResponse } from "@services/protobuf";
+import { WebsocketClient } from "@services/protobuf";
+import { ICustomMethod } from "@types";
 
-export type TSocketHandler<T> = (
-    connection: SocketStream & T,
-    message: Record<string, unknown>,
-    user: User
+export type TSocketHandler<D> = (
+    connection: SocketStream & ICustomMethod,
+    message: D,
+    vkId: number,
 ) => unknown;
-export interface ICustomMethod {
-    send: (data: WebsocketResponse) => void;
-}
 
-export class SocketCommand {
-    game: string;
-    name: Command;
-    handler: TSocketHandler<{}>;
+export class SocketCommand<
+    T extends keyof WebsocketClient,
+    K extends keyof NonNullable<WebsocketClient[T]>,
+> {
+    game: T;
+    name: K | "connection";
+    handler: TSocketHandler<NonNullable<NonNullable<WebsocketClient[T]>[K]>>;
 
     constructor(data: {
-        name: Command;
-        handler: TSocketHandler<ICustomMethod>;
+        game: T;
+        name: K | "connection";
+        handler: TSocketHandler<
+            NonNullable<NonNullable<WebsocketClient[T]>[K]>
+        >;
     }) {
         this.name = data.name;
         this.handler = (connection, message, user) => {
-            //@ts-ignore
-            connection.send = (msg: WebsocketResponse) =>
-                connection.socket.send(WebsocketResponse.toBinary(msg));
-
-            data.handler(
-                //@ts-ignore
-                connection as unknown as TSocketHandler<ICustomMethod>,
-                message,
-                user
-            );
+            data.handler(connection, message, user);
         };
     }
 }
