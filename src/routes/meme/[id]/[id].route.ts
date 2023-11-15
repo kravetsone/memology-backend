@@ -13,48 +13,11 @@ export const get = async (fastify: FastifyZodInstance) => {
         async (req, res) => {
             const { id } = req.params;
 
-            const meme = await prisma.meme.findUnique({
-                where: { id },
-                select: {
-                    id: true,
-                    description: true,
-                    title: true,
-                    image: true,
-                    likesCount: true,
-                    inFavorites: {
-                        where: {
-                            user: {
-                                vkId: +req.vkParams.vk_user_id,
-                            },
-                        },
-                    },
-                    inLikes: {
-                        where: {
-                            user: {
-                                vkId: +req.vkParams.vk_user_id,
-                            },
-                        },
-                    },
-                    inDislikes: {
-                        where: {
-                            user: {
-                                vkId: +req.vkParams.vk_user_id,
-                            },
-                        },
-                    },
-                    _count: {
-                        select: {
-                            inFavorites: true,
-                            inLikes: true,
-                            inDislikes: true,
-                        },
-                    },
-                },
-            });
+            const meme = await prisma.meme.get(id, +req.vkParams.vk_user_id);
             if (!meme)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этого мема не существует",
+                    "Этого мема не существует"
                 );
             console.log(meme);
 
@@ -67,15 +30,15 @@ export const get = async (fastify: FastifyZodInstance) => {
                     favoritesCount: meme._count.inFavorites,
                     isFavorites: !!meme.inFavorites.length,
                     likesCount: meme.likesCount,
-                    commentsCount: 0,
-                    ownerId: 70267059,
+                    commentsCount: meme._count.comments,
+                    ownerId: Number(meme.owner.vkId),
                     mark: meme.inLikes.length
                         ? Mark.LIKE
-                        : (meme.inDislikes.length
+                        : meme.inDislikes.length
                         ? Mark.DISLIKE
-                        : undefined),
-                }),
+                        : undefined,
+                })
             );
-        },
+        }
     );
 };

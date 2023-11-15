@@ -49,6 +49,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                                 description: true,
                                 title: true,
                                 image: true,
+                                likesCount: true,
                                 inFavorites: {
                                     where: {
                                         user: {
@@ -59,8 +60,6 @@ export const get = async (fastify: FastifyZodInstance) => {
                                 _count: {
                                     select: {
                                         inFavorites: true,
-                                        inLikes: true,
-                                        inDislikes: true,
                                     },
                                 },
                             },
@@ -78,13 +77,10 @@ export const get = async (fastify: FastifyZodInstance) => {
                         image: meme.image,
                         favoritesCount: meme._count.inFavorites,
                         isFavorites: !!meme.inFavorites,
-                        likesCount:
-                            meme._count.inLikes > meme._count.inDislikes
-                                ? meme._count.inLikes - meme._count.inDislikes
-                                : meme._count.inDislikes - meme._count.inLikes,
+                        likesCount: meme.likesCount,
                     })),
-                }),
+                })
             );
-        },
+        }
     );
 };

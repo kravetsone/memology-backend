@@ -39,7 +39,7 @@ export const memeModelExtension = {
                     inLikes?: IListItem;
                     inDislikes?: IListItem;
                     inFavorites?: IListItem;
-                },
+                }
             ) {
                 console.log(type);
 
@@ -110,6 +110,54 @@ export const memeModelExtension = {
                     });
                 return prisma.favorite.create(data);
             },
+
+            async get(id: number, vkId: number) {
+                return prisma.meme.findUnique({
+                    where: { id },
+                    select: {
+                        id: true,
+                        description: true,
+                        title: true,
+                        image: true,
+                        likesCount: true,
+                        inFavorites: {
+                            where: {
+                                user: {
+                                    vkId,
+                                },
+                            },
+                        },
+                        owner: {
+                            select: {
+                                vkId: true,
+                            },
+                        },
+                        inLikes: {
+                            where: {
+                                user: {
+                                    vkId,
+                                },
+                            },
+                        },
+                        inDislikes: {
+                            where: {
+                                user: {
+                                    vkId,
+                                },
+                            },
+                        },
+                        _count: {
+                            select: {
+                                inFavorites: true,
+                                inLikes: true,
+                                inDislikes: true,
+                                comments: true,
+                            },
+                        },
+                    },
+                });
+            },
+
             async getList(
                 query: string,
                 {
@@ -120,10 +168,10 @@ export const memeModelExtension = {
                     page: number;
                     pageSize: number;
                     vkId: number;
-                },
+                }
             ) {
                 const context = Prisma.getExtensionContext(
-                    this,
+                    this
                 ) as typeof prisma.meme;
 
                 return context.findManyAndCount({
@@ -165,8 +213,6 @@ export const memeModelExtension = {
                         _count: {
                             select: {
                                 inFavorites: true,
-                                inLikes: true,
-                                inDislikes: true,
                             },
                         },
                     },
