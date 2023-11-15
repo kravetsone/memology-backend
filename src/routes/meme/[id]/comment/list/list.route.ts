@@ -1,6 +1,6 @@
 import { prisma } from "@db";
 import { CommentsResponse_CommentsListResponse } from "@services/protobuf/comment";
-import { Mark, MemeListResponse } from "@services/protobuf/meme";
+import { Mark } from "@services/protobuf/meme";
 import { FastifyZodInstance } from "@types";
 import { DateTime } from "luxon";
 import { schema } from "./list.schema";
@@ -22,7 +22,28 @@ export const get = async (fastify: FastifyZodInstance) => {
                 },
                 skip: (+page - 1) * +pageSize,
                 take: pageSize,
-                include: {
+                select: {
+                    id: true,
+                    text: true,
+                    createdAt: true,
+                    meme: {
+                        select: {
+                            inLikes: {
+                                where: {
+                                    user: {
+                                        vkId: +req.vkParams.vk_user_id,
+                                    },
+                                },
+                            },
+                            inDislikes: {
+                                where: {
+                                    user: {
+                                        vkId: +req.vkParams.vk_user_id,
+                                    },
+                                },
+                            },
+                        },
+                    },
                     user: {
                         select: {
                             vkId: true,
@@ -43,7 +64,11 @@ export const get = async (fastify: FastifyZodInstance) => {
                             comment.createdAt,
                         ).toUnixInteger(),
                         likesCount: 0,
-                        mark: Mark.LIKE,
+                        mark: comment.meme.inLikes.length
+                            ? Mark.LIKE
+                            : (comment.meme.inDislikes.length
+                            ? Mark.DISLIKE
+                            : undefined),
                     })),
                 }),
             );

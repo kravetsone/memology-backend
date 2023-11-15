@@ -5,7 +5,7 @@ import fastifyPlugin from "fastify-plugin";
 async function registerWebSocket(fastify: FastifyZodInstance) {
     await fastify.register(fastifyWebSocket);
 
-    fastify.get("/", { websocket: true }, (connection, req) => {
+    fastify.get("/", { websocket: true }, (connection) => {
         connection.socket.on("message", (msg) => {
             console.log("test");
             connection.socket.send(msg.toString());

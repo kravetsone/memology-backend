@@ -1,6 +1,6 @@
 import { prisma } from "@db";
 import { APIError, ErrorCode } from "@services/errors";
-import { Mark, MemeItem, MemeResponse } from "@services/protobuf/meme";
+import { Mark, MemeResponse } from "@services/protobuf/meme";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./[id].schema";
 
@@ -71,9 +71,9 @@ export const get = async (fastify: FastifyZodInstance) => {
                     ownerId: 70267059,
                     mark: meme.inLikes.length
                         ? Mark.LIKE
-                        : meme.inDislikes.length
+                        : (meme.inDislikes.length
                         ? Mark.DISLIKE
-                        : undefined,
+                        : undefined),
                 }),
             );
         },

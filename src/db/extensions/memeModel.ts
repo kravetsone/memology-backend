@@ -1,4 +1,4 @@
-import { Prisma, prisma, User } from "@db/prisma";
+import { Prisma, prisma } from "@db/prisma";
 import { ListType } from "@types";
 
 export interface IListItem {

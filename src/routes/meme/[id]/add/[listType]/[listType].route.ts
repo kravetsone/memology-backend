@@ -1,7 +1,6 @@
 import { prisma } from "@db";
 import { APIError, ErrorCode } from "@services/errors";
-import { Mark, MemeItem, MemeResponse } from "@services/protobuf/meme";
-import { FastifyZodInstance, ListType } from "@types";
+import { FastifyZodInstance } from "@types";
 import { schema } from "./[listType].schema";
 
 export const get = async (fastify: FastifyZodInstance) => {
