@@ -2,32 +2,43 @@ import fastifyWebSocket, { SocketStream } from "@fastify/websocket";
 import { WebsocketClient, WebsocketServer } from "@services/protobuf";
 import { FastifyZodInstance, ICustomMethod } from "@types";
 import fastifyPlugin from "fastify-plugin";
+import { z } from "zod";
 import { SocketManager } from "./core";
 
 const socketManager = new SocketManager();
+
+const params = z.object({
+    game: z.string(),
+    roomId: z.string(),
+});
 
 async function registerWebSocket(fastify: FastifyZodInstance) {
     await fastify.register(fastifyWebSocket);
 
     fastify.get(
-        "/:game",
-        { websocket: true },
+        "/:game/:roomId",
+        { websocket: true, schema: { params } },
         async (connection: SocketStream & ICustomMethod, req) => {
-            const game = "phone";
-
             const connectionCommand = socketManager
                 .getCommands()
                 .find(
                     (command) =>
-                        command.game === game && command.name === "connection",
+                        command.game === req.params.game &&
+                        command.name === "connection",
                 );
 
             if (!connectionCommand) return connection.socket.close();
-            await connectionCommand.handler(
-                connection,
-                null,
-                +req.vkParams.vk_user_id,
-            );
+
+            connection.send = (msg: WebsocketServer[keyof WebsocketServer]) =>
+                connection.socket.send(
+                    WebsocketServer.toBinary({
+                        [req.params.game]: msg,
+                    }),
+                );
+            connection.vkId = +req.vkParams.vk_user_id;
+            connection.roomId = req.params.roomId;
+
+            await connectionCommand.handler(connection, null);
 
             connection.socket.on("message", async (msg) => {
                 if (!(msg instanceof ArrayBuffer)) return;
@@ -47,19 +58,9 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
                     );
                 if (!command) return connection.socket.close();
 
-                connection.send = (
-                    msg: WebsocketServer[keyof WebsocketServer],
-                ) =>
-                    connection.socket.send(
-                        WebsocketServer.toBinary({
-                            [gameName]: msg,
-                        }),
-                    );
-
                 await command.handler(
                     connection,
                     commandMsg[gameName][commandName],
-                    +req.vkParams.vk_user_id,
                 );
             });
         },

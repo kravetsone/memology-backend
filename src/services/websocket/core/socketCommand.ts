@@ -5,7 +5,6 @@ import { ICustomMethod } from "@types";
 export type TSocketHandler<D> = (
     connection: SocketStream & ICustomMethod,
     message: D,
-    vkId: number,
 ) => unknown;
 
 export class SocketCommand<
@@ -24,8 +23,6 @@ export class SocketCommand<
         >;
     }) {
         this.name = data.name;
-        this.handler = (connection, message, user) => {
-            data.handler(connection, message, user);
-        };
+        this.handler = data.handler;
     }
 }

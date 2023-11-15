@@ -66,4 +66,6 @@ export enum ListType {
 
 export interface ICustomMethod {
     send: (msg: WebsocketServer[keyof WebsocketServer]) => void;
+    vkId: number;
+    roomId: string;
 }
