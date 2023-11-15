@@ -154,6 +154,7 @@ export const memeModelExtension = {
                         description: true,
                         title: true,
                         image: true,
+                        likesCount: true,
                         inFavorites: {
                             where: {
                                 user: {

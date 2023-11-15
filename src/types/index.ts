@@ -53,8 +53,8 @@ export interface IVKParams {
 }
 
 export enum RatingType {
-    WEEKLY = "WEEKLY",
-    ETERNAL = "ETERNAL",
+    WEEKLY = "weekly",
+    ETERNAL = "eternal",
 }
 
 export enum ListType {

@@ -28,10 +28,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                         image: meme.image,
                         favoritesCount: meme._count.inFavorites,
                         isFavorites: !!meme.inFavorites.length,
-                        likesCount:
-                            meme._count.inLikes > meme._count.inDislikes
-                                ? meme._count.inLikes - meme._count.inDislikes
-                                : meme._count.inDislikes - meme._count.inLikes,
+                        likesCount: meme.likesCount,
                     })),
                 }),
             );
