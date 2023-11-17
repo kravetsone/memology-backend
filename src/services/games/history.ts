@@ -1,10 +1,9 @@
-import { SocketStream } from "@fastify/websocket";
-import { ICustomMethod } from "@types";
+import { TCustomConnection } from "@types";
 
 export class HistoryGame {
-    rooms: Record<string, (SocketStream & ICustomMethod)[]>;
+    rooms: Record<string, TCustomConnection[]>;
 
-    joinUser(connection: SocketStream & ICustomMethod) {
+    joinUser(connection: TCustomConnection) {
         const room = this.rooms[connection.roomId];
 
         if (!room) {
@@ -17,9 +16,19 @@ export class HistoryGame {
         room.push(connection);
     }
 
+    leaveUser(connection: TCustomConnection) {
+        const room = this.rooms[connection.roomId];
+        if (!room) return;
+
+        const index = room.findIndex((x) => x.vkId === connection.vkId);
+        if (index === -1) return;
+
+        room.splice(index, 1);
+    }
+
     broadcast(
-        connection: SocketStream & ICustomMethod,
-        msg: Parameters<(SocketStream & ICustomMethod)["send"]>[0],
+        connection: TCustomConnection,
+        msg: Parameters<TCustomConnection["send"]>[0],
     ) {
         const room = this.rooms[connection.roomId];
 

@@ -1,10 +1,10 @@
 import { historyGame } from "@services/games/history";
 import { SocketCommand } from "@services/websocket/core";
 
-export const connectionCommand = new SocketCommand({
+export const disconnectionCommand = new SocketCommand({
     game: "history",
-    name: "connection",
+    name: "disconnection",
     handler: (connection, _) => {
-        historyGame.joinUser(connection);
+        historyGame.leaveUser(connection);
     },
 });

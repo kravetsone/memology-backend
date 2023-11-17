@@ -1,13 +1,9 @@
 syntax = "proto3";
 
-message Smm {
-    uint32 userId =  1;
-}
 
 message WebsocketClient {
     message HistoryCommand {
         string test = 1;
-        Smm test2 = 2;
     }
 
     HistoryCommand history = 1;
@@ -33,7 +29,17 @@ message WebsocketServer {
             uint32 vkId = 1;
         }
 
-        UserJoined user_joined = 1;
+        message UserLeaved {
+            uint32 vkId = 1;
+        }
+
+        message LobbyInfo {
+            repeated uint32 vkIds =  1;
+        }
+        
+        UserJoined userJoined = 1;
+        UserLeaved userLeaved = 2;
+        LobbyInfo lobbyInfo = 3;
     }
 
     HistoryEvents history = 1;
