@@ -10,6 +10,10 @@ export class SocketManager {
         this.commands = [];
     }
 
+    getCommand(game: string, command: string) {
+        return this.commands.find((x) => x.game === game && x.name === command);
+    }
+
     getCommands() {
         return this.commands;
     }

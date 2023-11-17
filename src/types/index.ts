@@ -1,3 +1,4 @@
+import { SocketStream } from "@fastify/websocket";
 import { WebsocketServer } from "@services/protobuf";
 import {
     FastifyBaseLogger,
@@ -69,3 +70,5 @@ export interface ICustomMethod {
     vkId: number;
     roomId: string;
 }
+
+export type TCustomConnection = SocketStream & ICustomMethod;

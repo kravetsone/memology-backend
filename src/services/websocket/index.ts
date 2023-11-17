@@ -1,6 +1,6 @@
-import fastifyWebSocket, { SocketStream } from "@fastify/websocket";
+import fastifyWebSocket from "@fastify/websocket";
 import { WebsocketClient, WebsocketServer } from "@services/protobuf";
-import { FastifyZodInstance, ICustomMethod } from "@types";
+import { FastifyZodInstance, TCustomConnection } from "@types";
 import fastifyPlugin from "fastify-plugin";
 import { z } from "zod";
 import { SocketManager } from "./core";
@@ -18,14 +18,11 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
     fastify.get(
         "/:game/:roomId",
         { websocket: true, schema: { params } },
-        async (connection: SocketStream & ICustomMethod, req) => {
-            const connectionCommand = socketManager
-                .getCommands()
-                .find(
-                    (command) =>
-                        command.game === req.params.game &&
-                        command.name === "connection",
-                );
+        async (connection: TCustomConnection, req) => {
+            const connectionCommand = socketManager.getCommand(
+                req.params.game,
+                "connection",
+            );
 
             if (!connectionCommand) return connection.socket.close();
 
@@ -40,6 +37,10 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
 
             await connectionCommand.handler(connection, null);
 
+            connection.socket.on("close", async () => {
+                await connectionCommand.handler(connection, null);
+            });
+
             connection.socket.on("message", async (msg) => {
                 if (!(msg instanceof ArrayBuffer)) return;
                 const commandMsg = WebsocketClient.fromBinary(
@@ -49,14 +50,8 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
                 const gameName = Object.keys(commandMsg).at(0)!;
                 const commandName = Object.keys(commandMsg[gameName]).at(0)!;
 
-                const command = socketManager
-                    .getCommands()
-                    .find(
-                        (command) =>
-                            command.game === gameName &&
-                            command.name === commandName,
-                    );
-                if (!command) return connection.socket.close();
+                const command = socketManager.getCommand(gameName, commandName);
+                if (!command) return;
 
                 await command.handler(
                     connection,

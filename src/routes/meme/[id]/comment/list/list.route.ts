@@ -22,6 +22,9 @@ export const get = async (fastify: FastifyZodInstance) => {
                 },
                 skip: (+page - 1) * +pageSize,
                 take: pageSize,
+                orderBy: {
+                    createdAt: "desc",
+                },
                 select: {
                     id: true,
                     text: true,

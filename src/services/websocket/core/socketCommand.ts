@@ -1,9 +1,8 @@
-import { SocketStream } from "@fastify/websocket";
 import { WebsocketClient } from "@services/protobuf";
-import { ICustomMethod } from "@types";
+import { TCustomConnection } from "@types";
 
 export type TSocketHandler<D> = (
-    connection: SocketStream & ICustomMethod,
+    connection: TCustomConnection,
     message: D,
 ) => unknown;
 
@@ -12,12 +11,12 @@ export class SocketCommand<
     K extends keyof NonNullable<WebsocketClient[T]>,
 > {
     game: T;
-    name: K | "connection";
+    name: K | "connection" | "disconnection";
     handler: TSocketHandler<NonNullable<NonNullable<WebsocketClient[T]>[K]>>;
 
     constructor(data: {
         game: T;
-        name: K | "connection";
+        name: K | "connection" | "disconnection";
         handler: TSocketHandler<
             NonNullable<NonNullable<WebsocketClient[T]>[K]>
         >;
