@@ -29,7 +29,6 @@ export class SocketManager {
                         any,
                         any
                     >;
-                    command.game = path.split("/").at(7)!;
 
                     this.commands.push(command);
                 });

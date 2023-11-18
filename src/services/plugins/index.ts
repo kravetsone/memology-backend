@@ -26,7 +26,7 @@ async function registerPlugins(fastify: FastifyZodInstance) {
             req: FastifyRequest<{ Querystring: { "vk-params": IVKParams } }>,
         ) => {
             console.log(`[${req.method}]`, req.url, req.body || req.query);
-            console.log(req.headers);
+
             if (req.url.includes("documentation")) return;
             if (!req.headers["vk-params"] && !req.query["vk-params"])
                 throw new APIError(

@@ -65,10 +65,11 @@ export enum ListType {
     FAVORITE = "favorite",
 }
 
-export interface ICustomMethod {
+export interface ICustomSocket {
     send: (msg: WebsocketServer[keyof WebsocketServer]) => void;
     vkId: number;
     roomId: string;
+    isOwner: boolean;
 }
 
-export type TCustomConnection = SocketStream & ICustomMethod;
+export type TCustomConnection = SocketStream & ICustomSocket;

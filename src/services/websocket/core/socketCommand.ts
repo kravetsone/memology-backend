@@ -21,6 +21,7 @@ export class SocketCommand<
             NonNullable<NonNullable<WebsocketClient[T]>[K]>
         >;
     }) {
+        this.game = data.game;
         this.name = data.name;
         this.handler = data.handler;
     }

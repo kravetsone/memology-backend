@@ -3,11 +3,16 @@ syntax = "proto3";
 
 message WebsocketClient {
     message HistoryCommand {
-        string test = 1;
+        message KickUser {
+            uint32 vkId = 1;
+        }
+
+        KickUser kickUser = 1;
     }
 
     HistoryCommand history = 1;
 }
+
 
 enum WebsocketEvent {
     ERROR = 0;
@@ -25,16 +30,23 @@ message WebsocketError {
 
 message WebsocketServer {
     message HistoryEvents {
+        message LobbyUser {
+            uint32 vkId = 1;
+            bool isOwner = 2;
+        }
+
         message UserJoined {
             uint32 vkId = 1;
+            bool isOwner = 2;
         }
 
         message UserLeaved {
             uint32 vkId = 1;
+            optional uint32 newOwnerVkId = 2;
         }
 
         message LobbyInfo {
-            repeated uint32 vkIds =  1;
+            repeated LobbyUser users =  1;
         }
         
         UserJoined userJoined = 1;

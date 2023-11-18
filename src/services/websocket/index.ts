@@ -38,7 +38,14 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
             await connectionCommand.handler(connection, null);
 
             connection.socket.on("close", async () => {
-                await connectionCommand.handler(connection, null);
+                console.log("disconnection");
+                const disconnectionCommand = socketManager.getCommand(
+                    "history",
+                    "disconnection",
+                );
+                if (!disconnectionCommand) return connection.socket.close();
+
+                await disconnectionCommand.handler(connection, null);
             });
 
             connection.socket.on("message", async (msg) => {

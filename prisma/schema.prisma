@@ -18,6 +18,9 @@ model User {
   dislikes  Dislike[]
   comments  Comment[]
   memes     Meme[]
+  rooms     GameRoom[] @relation("GameRoomUsers")
+
+  ownedRooms GameRoom[]
 }
 
 model Meme {
@@ -90,4 +93,19 @@ model Dislike {
   memeId Int
 
   createdAt DateTime @default(now())
+}
+
+model GameRoom {
+  id String @id
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int  @unique
+
+  users User[] @relation("GameRoomUsers")
+
+  data Json
+}
+
+enum GameType {
+  HISTORY
 }
