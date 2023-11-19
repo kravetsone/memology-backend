@@ -32,6 +32,5 @@ prisma.$connect().then(async () => {
     const host = await fastify.listen({
         port: PORT,
     });
-    console.log(fastify.printRoutes());
     console.log(`[SERVER] Server has been started at ${host}`);
 });

@@ -1,4 +1,4 @@
-import { prisma } from "@db";
+import { GameStatus, prisma } from "@db";
 import { historyGame } from "@services/games/history";
 import { SocketCommand } from "@services/websocket/core";
 
@@ -9,6 +9,7 @@ export const connectionCommand = new SocketCommand({
         const room = await prisma.gameRoom.findUnique({
             where: {
                 id: connection.roomId,
+                status: GameStatus.CREATED,
                 users: {
                     none: {
                         vkId: connection.vkId,

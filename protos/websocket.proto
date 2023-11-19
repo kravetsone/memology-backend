@@ -7,7 +7,15 @@ message WebsocketClient {
             uint32 vkId = 1;
         }
 
+        message StartGame {}
+
+        message SendText {
+            string text = 1;
+        }
+
         KickUser kickUser = 1;
+        StartGame startGame = 2;
+        SendText sendText = 3;
     }
 
     HistoryCommand history = 1;
@@ -49,10 +57,28 @@ message WebsocketServer {
             repeated LobbyUser users =  1;
         }
         
+        message ShowSnackbar {
+            string message = 1;
+        }
+
+        message StartLobby {}
+
+        message TimerTick {
+            uint32 time = 1;
+        }
+
+        message NextStep {}
+
+        message FinishGame {}
+
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
         LobbyInfo lobbyInfo = 3;
-
+        ShowSnackbar showSnackbar = 4;
+        StartLobby startLobby = 5;
+        TimerTick timerTick = 6;
+        NextStep nextStep = 7;
+        FinishGame finishGame = 8;
     }
 
     HistoryEvents history = 1;
