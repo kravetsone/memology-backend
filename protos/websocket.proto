@@ -52,6 +52,7 @@ message WebsocketServer {
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
         LobbyInfo lobbyInfo = 3;
+
     }
 
     HistoryEvents history = 1;

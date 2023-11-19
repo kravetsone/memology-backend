@@ -52,7 +52,7 @@ export class HistoryGame {
 
         room.splice(index, 1);
 
-        this.broadcast(connection, {
+        this.broadcastAll(connection, {
             userLeaved: { vkId },
         });
     }
@@ -64,6 +64,15 @@ export class HistoryGame {
         const room = this.rooms[connection.roomId];
 
         room.filter((c) => c.vkId !== connection.vkId).map((x) => x.send(msg));
+    }
+
+    broadcastAll(
+        connection: TCustomConnection,
+        msg: Parameters<TCustomConnection["send"]>[0],
+    ) {
+        const room = this.rooms[connection.roomId];
+
+        room.map((x) => x.send(msg));
     }
 }
 
