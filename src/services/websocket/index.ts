@@ -19,6 +19,33 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
         "/:game/:roomId",
         { websocket: true, schema: { params } },
         async (connection: TCustomConnection, req) => {
+            connection.socket.on("close", async () => {
+                console.log("disconnection");
+                const disconnectionCommand = socketManager.getCommand(
+                    "history",
+                    "disconnection",
+                );
+                if (!disconnectionCommand) return connection.socket.close();
+
+                await disconnectionCommand.handler(connection, null);
+            });
+
+            connection.socket.on("message", async (msg) => {
+                const commandMsg = WebsocketClient.fromBinary(
+                    new Uint8Array(msg as ArrayBuffer),
+                );
+                console.log(commandMsg);
+                const gameName = Object.keys(commandMsg).at(0)!;
+                const commandName = Object.keys(commandMsg[gameName]).at(0)!;
+
+                const command = socketManager.getCommand(gameName, commandName);
+                if (!command) return;
+
+                await command.handler(
+                    connection,
+                    commandMsg[gameName][commandName],
+                );
+            });
             const connectionCommand = socketManager.getCommand(
                 req.params.game,
                 "connection",
@@ -36,35 +63,6 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
             connection.roomId = req.params.roomId;
 
             await connectionCommand.handler(connection, null);
-
-            connection.socket.on("close", async () => {
-                console.log("disconnection");
-                const disconnectionCommand = socketManager.getCommand(
-                    "history",
-                    "disconnection",
-                );
-                if (!disconnectionCommand) return connection.socket.close();
-
-                await disconnectionCommand.handler(connection, null);
-            });
-
-            connection.socket.on("message", async (msg) => {
-                if (!(msg instanceof ArrayBuffer)) return;
-                const commandMsg = WebsocketClient.fromBinary(
-                    new Uint8Array(msg),
-                );
-
-                const gameName = Object.keys(commandMsg).at(0)!;
-                const commandName = Object.keys(commandMsg[gameName]).at(0)!;
-
-                const command = socketManager.getCommand(gameName, commandName);
-                if (!command) return;
-
-                await command.handler(
-                    connection,
-                    commandMsg[gameName][commandName],
-                );
-            });
         },
     );
 }

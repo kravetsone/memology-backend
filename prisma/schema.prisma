@@ -96,14 +96,22 @@ model Dislike {
 }
 
 model GameRoom {
-  id String @id
+  id     String     @id
+  type   GameType
+  status GameStatus @default(CREATED)
 
   owner   User @relation(fields: [ownerId], references: [id])
-  ownerId Int  @unique
+  ownerId Int
 
   users User[] @relation("GameRoomUsers")
 
-  data Json
+  data Json @default("{}")
+}
+
+enum GameStatus {
+  CREATED
+  STARTED
+  FINISHED
 }
 
 enum GameType {
