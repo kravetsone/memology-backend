@@ -71,6 +71,10 @@ message WebsocketServer {
 
         message FinishGame {}
 
+        message GameGif {
+            bytes buffer = 1;
+        }
+
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
         LobbyInfo lobbyInfo = 3;
@@ -79,6 +83,7 @@ message WebsocketServer {
         TimerTick timerTick = 6;
         NextStep nextStep = 7;
         FinishGame finishGame = 8;
+        GameGif gameGif = 9;
     }
 
     HistoryEvents history = 1;

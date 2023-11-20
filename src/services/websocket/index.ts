@@ -50,7 +50,6 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
                 req.params.game,
                 "connection",
             );
-
             if (!connectionCommand) return connection.socket.close();
 
             connection.send = (msg: WebsocketServer[keyof WebsocketServer]) =>

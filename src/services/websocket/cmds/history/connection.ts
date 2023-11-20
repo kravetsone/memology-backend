@@ -22,6 +22,7 @@ export const connectionCommand = new SocketCommand({
                 },
             },
         });
+        console.log(room);
         if (!room) return connection.socket.close();
 
         await prisma.gameRoom.update({

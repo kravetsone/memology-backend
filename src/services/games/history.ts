@@ -1,4 +1,5 @@
 import { GameStatus } from "@prisma/client";
+import { createGIF } from "@services/gif";
 import { TCustomConnection } from "@types";
 
 interface IUserRound {
@@ -111,9 +112,7 @@ export class HistoryGame {
         console.log(room.rounds);
         //TODO: not on connections. use players count
         if (room.rounds.length === room.users.length)
-            return this.broadcastAll(connection, {
-                finishGame: {},
-            });
+            return this.finishGame(connection);
         if (room.rounds.length)
             this.broadcastAll(connection, {
                 nextStep: {},
@@ -160,6 +159,20 @@ export class HistoryGame {
             clearInterval(room.timerId);
             return this.nextStep(connection);
         }
+    }
+
+    async finishGame(connection: TCustomConnection) {
+        this.broadcastAll(connection, {
+            finishGame: {},
+        });
+
+        const gif = await createGIF();
+
+        this.broadcastAll(connection, {
+            gameGif: {
+                buffer: gif,
+            },
+        });
     }
 }
 
