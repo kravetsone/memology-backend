@@ -8,6 +8,7 @@ const defaultMessages: Record<ErrorCode, string> = {
     [ErrorCode.UPLOAD_ERROR]: "",
     [ErrorCode.NO_AUTH]: "Вы не авторизовались",
     [ErrorCode.NOT_EXISTS]: "Не существует",
+    [ErrorCode.GAME_STARTED]: "Игра уже началась",
 };
 
 const statuses: Record<ErrorCode, number> = {
@@ -16,6 +17,7 @@ const statuses: Record<ErrorCode, number> = {
     [ErrorCode.UPLOAD_ERROR]: 400,
     [ErrorCode.NO_AUTH]: 401,
     [ErrorCode.NOT_EXISTS]: 400,
+    [ErrorCode.GAME_STARTED]: 400,
 };
 
 export class APIError extends Error {

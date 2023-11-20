@@ -6,6 +6,7 @@ enum ErrorCode {
     VALIDATION_ERROR = 2;
     UPLOAD_ERROR = 3;
     NO_AUTH = 4;
+    GAME_STARTED = 5;
 }
 
 message ErrorItem {

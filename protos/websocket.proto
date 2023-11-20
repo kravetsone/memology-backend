@@ -88,3 +88,8 @@ message WebsocketServer {
 
     HistoryEvents history = 1;
 }
+
+message GetRoomInfoResponse {
+    string roomId = 1;
+    uint32 ownerVkId = 2;
+}

@@ -64,6 +64,9 @@ export enum ListType {
     DISLIKE = "dislike",
     FAVORITE = "favorite",
 }
+export enum GAMES {
+    HISTORY = "history",
+}
 
 export interface ICustomSocket {
     send: (msg: WebsocketServer[keyof WebsocketServer]) => void;
