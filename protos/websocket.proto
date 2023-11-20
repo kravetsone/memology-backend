@@ -67,7 +67,9 @@ message WebsocketServer {
             uint32 time = 1;
         }
 
-        message NextStep {}
+        message NextStep {
+            string previousContext = 1;
+        }
 
         message FinishGame {}
 
