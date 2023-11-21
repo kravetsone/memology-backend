@@ -2,7 +2,7 @@ import { GameStatus, prisma } from "@db";
 import { APIError, ErrorCode } from "@services/errors";
 import { GetRoomInfoResponse } from "@services/protobuf";
 import { FastifyZodInstance } from "@types";
-import { schema } from "./schema";
+import { schema } from "./[roomId].schema";
 
 export const get = async (fastify: FastifyZodInstance) => {
     fastify.get(
