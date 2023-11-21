@@ -1,12 +1,12 @@
 import { GameStatus } from "@prisma/client";
 import { createGIF } from "@services/gif";
 import { TCustomConnection } from "@types";
-import { loadImage } from "skia-canvas";
 import { vk, WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
 
 export interface IUserRound {
     vkId: number;
     text: string;
+    isReady: boolean;
 }
 
 export interface IVKUserData {
@@ -81,11 +81,11 @@ export class HistoryGame {
         const index = room.users.findIndex((x) => x.vkId === vkId);
         if (index === -1) return;
 
-        room.users.splice(index, 1);
-
         this.broadcastAll(connection, {
             userLeaved: { vkId },
         });
+
+        room.users.splice(index, 1);
     }
 
     broadcast(
@@ -147,7 +147,9 @@ export class HistoryGame {
                 });
             });
         }
-        room.rounds.push(room.users.map((x) => ({ vkId: x.vkId, text: "" })));
+        room.rounds.push(
+            room.users.map((x) => ({ vkId: x.vkId, text: "", isReady: false })),
+        );
         this.startTimer(connection);
     }
 
@@ -173,6 +175,24 @@ export class HistoryGame {
         }, 1000);
     }
 
+    handleReady(connection: TCustomConnection, text: string) {
+        const room = this.rooms[connection.roomId];
+        if (!room.timerId) return;
+        const round = room.rounds.at(-1)!;
+
+        const roundUser = round.find((x) => x.vkId === connection.vkId)!;
+        roundUser.isReady = !roundUser.isReady;
+        roundUser.text = text;
+        this.broadcastAll(connection, {
+            readyCounter: round.filter((x) => x.isReady).length,
+        });
+        if (round.every((x) => x.isReady)) {
+            room.time = 0;
+            clearInterval(room.timerId);
+            return this.nextStep(connection);
+        }
+    }
+
     handleText(connection: TCustomConnection, text: string) {
         const room = this.rooms[connection.roomId];
         if (!room.timerId) return;
@@ -180,14 +200,6 @@ export class HistoryGame {
 
         const roundUser = round.find((x) => x.vkId === connection.vkId)!;
         roundUser.text = text;
-        if (
-            room.rounds.length === room.users.length &&
-            round.every((x) => x.text)
-        ) {
-            room.time = 0;
-            clearInterval(room.timerId);
-            return this.nextStep(connection);
-        }
     }
 
     getDialogForIndex(

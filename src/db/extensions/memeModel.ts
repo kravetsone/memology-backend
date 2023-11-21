@@ -43,6 +43,7 @@ export const memeModelExtension = {
             ) {
                 console.log(type);
 
+                //@ts-expect-error TODO: check this
                 const data: Parameters<typeof prisma.like.create>[0] = {
                     data: {
                         user: {
