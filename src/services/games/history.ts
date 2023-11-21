@@ -1,11 +1,21 @@
 import { GameStatus } from "@prisma/client";
 import { createGIF } from "@services/gif";
 import { TCustomConnection } from "@types";
-import { vk } from "..";
+import { loadImage } from "skia-canvas";
+import { vk, WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
 
 export interface IUserRound {
     vkId: number;
     text: string;
+}
+
+export interface IVKUserData {
+    id: number;
+    photo_200: string;
+    first_name: string;
+    last_name: string;
+    can_access_closed: boolean;
+    is_closed: boolean;
 }
 
 interface IRoomData {
@@ -180,27 +190,58 @@ export class HistoryGame {
         }
     }
 
+    getDialogForIndex(
+        rounds: IUserRound[][],
+        roundIndex: number,
+        usersCount: number,
+    ) {
+        const dialog: IUserRound[] = [];
+        let index = roundIndex;
+        for (const [i, element] of rounds.entries()) {
+            console.log(i, index);
+            dialog.push(element.at((index + 1) % usersCount)!);
+            index++;
+        }
+        return dialog;
+    }
+
     async finishGame(connection: TCustomConnection) {
         const room = this.rooms[connection.roomId];
         room.status = GameStatus.FINISHED;
         clearInterval(room.timerId);
 
-        this.broadcastAll(connection, {
-            finishGame: {},
-        });
-        console.log(room.rounds);
-        const vkDatas = await vk.api.users.get({
+        const vkProfiles = (await vk.api.users.get({
             user_ids: room.users.map((x) => x.vkId),
             fields: ["photo_200"],
+        })) as unknown as IVKUserData[];
+        console.log(room.rounds);
+        const dialogs = room.rounds.map((_, index) =>
+            this.getDialogForIndex(room.rounds, index, room.users.length).map(
+                (msg) => {
+                    const owner = vkProfiles.find((x) => x.id === msg.vkId)!;
+                    return {
+                        text: msg.text,
+                        owner: {
+                            id: owner.id,
+                            photo: owner.photo_200,
+                            name: owner.first_name + " " + owner.last_name,
+                        },
+                    };
+                },
+            ),
+        ) as WebsocketServer_HistoryEvents_FinishGame_Msg[][];
+
+        this.broadcastAll(connection, {
+            finishGame: {
+                dialogs: dialogs.map((x, index) => ({
+                    id: index,
+                    msgs: x,
+                })),
+            },
         });
-        console.log(vkDatas);
-        room.rounds.forEach(async (_, index) => {
-            const gif = await createGIF(
-                room.rounds,
-                index,
-                room.users.length,
-                vkDatas,
-            );
+
+        dialogs.forEach(async (dialog) => {
+            const gif = await createGIF(dialog);
 
             this.broadcastAll(connection, {
                 gameGif: {

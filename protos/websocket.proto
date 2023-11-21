@@ -71,7 +71,24 @@ message WebsocketServer {
             string previousContext = 1;
         }
 
-        message FinishGame {}
+        message FinishGame {
+            message Msg {
+                message VKData {
+                    uint32 id = 1;
+                    string name = 2;
+                    string photo = 3;
+                }
+
+                string text = 1;
+                VKData owner = 2;
+            }
+            message Dialog {
+                uint32 id = 1;
+                repeated Msg msgs = 2;
+            }
+
+            repeated Dialog dialogs = 1;
+        }
 
         message GameGif {
             bytes buffer = 1;
