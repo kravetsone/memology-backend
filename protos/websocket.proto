@@ -17,10 +17,13 @@ message WebsocketClient {
             string text = 1;
         }
 
+        message NewGame {}
+
         KickUser kickUser = 1;
         StartGame startGame = 2;
         SendText sendText = 3;
         SetReady setReady = 4;
+        NewGame newGame = 5;
     }
 
     HistoryCommand history = 1;
@@ -96,9 +99,11 @@ message WebsocketServer {
         }
 
         message GameGif {
-            bytes buffer = 1;
+            uint32 dialogId = 1;
+            bytes buffer = 2;
         }
 
+        message NewGame {}
 
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
@@ -110,6 +115,7 @@ message WebsocketServer {
         FinishGame finishGame = 8;
         GameGif gameGif = 9;
         optional uint32 readyCounter = 10;
+        NewGame newGame = 11;
     }
 
     HistoryEvents history = 1;

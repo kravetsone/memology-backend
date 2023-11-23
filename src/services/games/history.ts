@@ -1,3 +1,4 @@
+import { prisma } from "@db";
 import { GameStatus } from "@prisma/client";
 import { createGIF } from "@services/gif";
 import { TCustomConnection } from "@types";
@@ -85,7 +86,9 @@ export class HistoryGame {
             userLeaved: { vkId },
         });
 
-        room.users.splice(index, 1);
+        const [user] = room.users.splice(index, 1);
+
+        user.socket.close();
     }
 
     broadcast(
@@ -252,14 +255,44 @@ export class HistoryGame {
             },
         });
 
-        dialogs.forEach(async (dialog) => {
+        dialogs.forEach(async (dialog, index) => {
             const gif = await createGIF(dialog);
 
             this.broadcastAll(connection, {
                 gameGif: {
+                    dialogId: index,
                     buffer: gif,
                 },
             });
+        });
+
+        await prisma.gameRoom.update({
+            where: {
+                id: connection.roomId,
+            },
+            data: {
+                status: GameStatus.FINISHED,
+            },
+        });
+    }
+
+    async startNewGame(connection: TCustomConnection) {
+        const room = this.rooms[connection.roomId];
+
+        room.status = GameStatus.CREATED;
+        room.rounds = [];
+
+        await prisma.gameRoom.update({
+            where: {
+                id: connection.roomId,
+            },
+            data: {
+                status: GameStatus.CREATED,
+            },
+        });
+
+        this.broadcastAll(connection, {
+            newGame: {},
         });
     }
 }
