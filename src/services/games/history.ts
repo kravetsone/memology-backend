@@ -256,12 +256,13 @@ export class HistoryGame {
         });
 
         dialogs.forEach(async (dialog, index) => {
-            const gif = await createGIF(dialog);
-
+            const [vkDoc, gif] = await createGIF(dialog);
+            console.log(vkDoc);
             this.broadcastAll(connection, {
                 gameGif: {
                     dialogId: index,
                     buffer: gif,
+                    vkAttachment: vkDoc,
                 },
             });
         });

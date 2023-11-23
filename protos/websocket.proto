@@ -101,6 +101,7 @@ message WebsocketServer {
         message GameGif {
             uint32 dialogId = 1;
             bytes buffer = 2;
+            string vkAttachment = 3;
         }
 
         message NewGame {}

@@ -4,3 +4,4 @@ node_modules
 .env
 src/services/protobuf/*
 files
+src/config.ts

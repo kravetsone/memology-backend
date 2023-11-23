@@ -1,7 +1,7 @@
 import { GifEncoder } from "@skyra/gifenc";
 import { buffer } from "node:stream/consumers";
 import { FontLibrary } from "skia-canvas";
-import { WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
+import { vk, vkUser, WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
 import { generateFrame } from "./generateFrame";
 
 FontLibrary.use([
@@ -17,14 +17,25 @@ export async function createGIF(
     const stream = encoder.createReadStream();
     encoder.setRepeat(0).setDelay(1000).setQuality(1).start();
 
-    const frames = await Promise.all(dialog.map(generateFrame));
+    await Promise.all(
+        dialog.map(async (msg, index) =>
+            encoder.addFrame(await generateFrame(msg, index, dialog.length)),
+        ),
+    );
 
-    for (const frame of frames) {
-        encoder.addFrame(frame);
-    }
     encoder.finish();
 
     const data = await buffer(stream);
+    const doc = await vkUser.upload.wallDocument({
+        group_id: 223365328,
+        title: "history.gif",
+        source: {
+            value: data,
+
+            contentType: "image/gif",
+        },
+    });
+    console.log(doc);
     console.log("end gif encode", Date.now() - time);
-    return data;
+    return [doc.toString(), data] as const;
 }
