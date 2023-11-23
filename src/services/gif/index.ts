@@ -1,4 +1,5 @@
-import { Gif } from "make-a-gif-commonjs";
+import { GifEncoder } from "@skyra/gifenc";
+import { buffer } from "node:stream/consumers";
 import { FontLibrary } from "skia-canvas";
 import { WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
 import { generateFrame } from "./generateFrame";
@@ -10,16 +11,20 @@ FontLibrary.use([
 export async function createGIF(
     dialog: WebsocketServer_HistoryEvents_FinishGame_Msg[],
 ) {
-    const gif = new Gif(750, 500, 15);
-    await Promise.all(
-        dialog.map(async (msg) => {
-            console.log(msg);
-            await gif.addFrame({
-                src: await generateFrame(msg),
-                duration: 1000,
-            });
-        }),
-    );
+    const time = Date.now();
+    console.log("start gif encode");
+    const encoder = new GifEncoder(750, 500);
+    const stream = encoder.createReadStream();
+    encoder.setRepeat(0).setDelay(1000).setQuality(1).start();
 
-    return gif.encode();
+    const frames = await Promise.all(dialog.map(generateFrame));
+
+    for (const frame of frames) {
+        encoder.addFrame(frame);
+    }
+    encoder.finish();
+
+    const data = await buffer(stream);
+    console.log("end gif encode", Date.now() - time);
+    return data;
 }

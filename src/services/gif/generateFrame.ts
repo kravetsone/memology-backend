@@ -39,10 +39,6 @@ export async function generateFrame(
     ctx.fillText(msg.owner.name, 620 - width, 413 + fontBoundingBoxAscent);
 
     clipper(ctx, await loadImage(msg.owner.photo), 628, 375, 72, 72, 35);
-    // try {
-    //     await canvas.saveAs(`/root/memology-backend/${text}.jpg`, {
-    //         format: "jpg",
-    //     });
-    // } catch (error) {}
-    return canvas.toBuffer("jpg", { quality: 1 });
+
+    return ctx;
 }
