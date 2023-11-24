@@ -26,7 +26,8 @@ message MemeResponse {
     uint32 commentsCount = 8;
     uint32 ownerId = 9;
     optional Mark mark = 10;
-
+    optional uint32 placeInEternalRating = 11;
+    optional uint32 placeInWeeklyRating = 12;
 }
 
 enum Mark {

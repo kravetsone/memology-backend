@@ -1,3 +1,5 @@
+import "./scheduler";
+
 export * from "./gif";
 export * from "./plugins";
 export * from "./protobuf";

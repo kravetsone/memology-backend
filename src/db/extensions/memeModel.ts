@@ -147,6 +147,9 @@ export const memeModelExtension = {
                                 },
                             },
                         },
+                        positionInRating: {
+                            select: { index: true, type: true },
+                        },
                         _count: {
                             select: {
                                 inFavorites: true,

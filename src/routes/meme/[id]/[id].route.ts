@@ -1,4 +1,4 @@
-import { prisma } from "@db";
+import { prisma, RatingType } from "@db";
 import { APIError, ErrorCode } from "@services/errors";
 import { Mark, MemeResponse } from "@services/protobuf/meme";
 import { FastifyZodInstance } from "@types";
@@ -32,11 +32,17 @@ export const get = async (fastify: FastifyZodInstance) => {
                     likesCount: meme.likesCount,
                     commentsCount: meme._count.comments,
                     ownerId: Number(meme.owner.vkId),
+                    placeInEternalRating: meme.positionInRating.find(
+                        (x) => x.type === RatingType.ETERNAL,
+                    )?.index,
+                    placeInWeeklyRating: meme.positionInRating.find(
+                        (x) => x.type === RatingType.WEEKLY,
+                    )?.index,
                     mark: meme.inLikes.length
                         ? Mark.LIKE
-                        : meme.inDislikes.length
+                        : (meme.inDislikes.length
                           ? Mark.DISLIKE
-                          : undefined,
+                          : undefined),
                 }),
             );
         },

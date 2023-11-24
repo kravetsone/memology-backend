@@ -33,10 +33,11 @@ model Meme {
   isSuggest  Boolean @default(true)
   likesCount Int     @default(0)
 
-  inFavorites Favorite[]
-  inLikes     Like[]
-  inDislikes  Dislike[]
-  comments    Comment[]
+  inFavorites      Favorite[]
+  inLikes          Like[]
+  inDislikes       Dislike[]
+  comments         Comment[]
+  positionInRating MemeInRating[]
 
   owner   User @relation(fields: [ownerId], references: [id])
   ownerId Int
@@ -116,4 +117,19 @@ enum GameStatus {
 
 enum GameType {
   HISTORY
+}
+
+model MemeInRating {
+  index Int
+  type  RatingType
+
+  meme   Meme @relation(fields: [memeId], references: [id])
+  memeId Int
+
+  @@id([index, type])
+}
+
+enum RatingType {
+  ETERNAL
+  WEEKLY
 }
