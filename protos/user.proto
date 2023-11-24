@@ -7,5 +7,6 @@ message UserResponse {
         uint32 likesCount = 3;
         uint32 dislikesCount = 4;
         uint32 favoritesCount = 5;
+        uint32 suggestMemesCount = 6;
     }
 }

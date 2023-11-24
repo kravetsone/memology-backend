@@ -18,6 +18,13 @@ export const signInOrUpExtension = {
                                 likes: true,
                                 dislikes: true,
                                 favorites: true,
+                                memes: {
+                                    where: {
+                                        owner: {
+                                            vkId,
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -42,6 +49,13 @@ export const signInOrUpExtension = {
                                     likes: true,
                                     dislikes: true,
                                     favorites: true,
+                                    memes: {
+                                        where: {
+                                            owner: {
+                                                vkId,
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },

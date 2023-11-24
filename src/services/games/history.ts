@@ -254,19 +254,6 @@ export class HistoryGame {
                 })),
             },
         });
-
-        dialogs.forEach(async (dialog, index) => {
-            const [vkDoc, gif] = await createGIF(dialog);
-            console.log(vkDoc);
-            this.broadcastAll(connection, {
-                gameGif: {
-                    dialogId: index,
-                    buffer: gif,
-                    vkAttachment: vkDoc || "",
-                },
-            });
-        });
-
         await prisma.gameRoom.update({
             where: {
                 id: connection.roomId,
@@ -275,6 +262,19 @@ export class HistoryGame {
                 status: GameStatus.FINISHED,
             },
         });
+        await Promise.all(
+            dialogs.map(async (dialog, index) => {
+                const [vkDoc, gif] = await createGIF(dialog);
+                console.log(vkDoc);
+                this.broadcastAll(connection, {
+                    gameGif: {
+                        dialogId: index,
+                        buffer: gif,
+                        vkAttachment: vkDoc || "",
+                    },
+                });
+            }),
+        );
     }
 
     async startNewGame(connection: TCustomConnection) {

@@ -21,7 +21,6 @@ export class SocketManager {
     async loadCommands() {
         glob(`${process.cwd()}/dist/services/websocket/cmds/**/*.js`).then(
             (paths) => {
-                console.log(paths);
                 paths.map(async (path) => {
                     const file = await import(path);
 

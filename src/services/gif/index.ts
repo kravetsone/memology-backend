@@ -32,7 +32,7 @@ export async function createGIF(
     const data = await buffer(stream);
 
     const doc = await vkUser.upload
-        .wallDocument({
+        .document({
             group_id: 223365328,
             title: "history.gif",
             source: {
@@ -42,7 +42,10 @@ export async function createGIF(
             },
         })
         .then((x) => x.toString())
-        .catch(() => null);
+        .catch((error) => {
+            console.log(error);
+            return null;
+        });
     console.log(doc);
     console.log("end gif encode", Date.now() - time);
     return [doc, data] as const;

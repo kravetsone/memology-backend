@@ -5,6 +5,7 @@ const params = z.object({
         z.literal("favorite"),
         z.literal("like"),
         z.literal("dislike"),
+        z.literal("my"),
     ]),
 });
 
