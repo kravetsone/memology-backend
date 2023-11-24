@@ -41,7 +41,7 @@ export class HistoryGame {
             this.rooms[connection.roomId] = {
                 users: [connection],
                 status: GameStatus.CREATED,
-                time: 15,
+                time: 0,
                 rounds: [],
             };
             room = this.rooms[connection.roomId];
@@ -127,7 +127,7 @@ export class HistoryGame {
 
         console.log(room.rounds);
         //TODO: not on connections. use players count
-        if (room.rounds.length === room.users.length)
+        if (room.rounds.length >= room.users.length)
             return this.finishGame(connection);
         if (room.rounds.length) {
             room.users.forEach((conn) => {
@@ -138,7 +138,7 @@ export class HistoryGame {
                 if (index === -1) return;
 
                 const msgOfAnotherUser = round.at(
-                    (index + 1) % room.users.length,
+                    (index - 1) % room.users.length,
                 );
                 if (!msgOfAnotherUser)
                     return console.error(round, index, room.rounds);
@@ -158,17 +158,16 @@ export class HistoryGame {
 
     startTimer(connection: TCustomConnection) {
         const room = this.rooms[connection.roomId];
-
+        if (room.time) return;
         room.time = 15;
 
         room.timerId = setInterval(() => {
-            if (!room.timerId) return clearInterval(room.timerId);
             room.time -= 1;
 
             if (room.time <= 0) {
                 room.time = 0;
-                this.nextStep(connection);
                 clearInterval(room.timerId);
+                this.nextStep(connection);
             } else
                 this.broadcastAll(connection, {
                     timerTick: {
@@ -180,7 +179,7 @@ export class HistoryGame {
 
     handleReady(connection: TCustomConnection, text: string) {
         const room = this.rooms[connection.roomId];
-        if (!room.timerId) return;
+        if (!room.time) return;
         const round = room.rounds.at(-1)!;
 
         const roundUser = round.find((x) => x.vkId === connection.vkId)!;
@@ -198,7 +197,7 @@ export class HistoryGame {
 
     handleText(connection: TCustomConnection, text: string) {
         const room = this.rooms[connection.roomId];
-        if (!room.timerId) return;
+        if (!room.time) return;
         const round = room.rounds.at(-1)!;
 
         const roundUser = round.find((x) => x.vkId === connection.vkId)!;
@@ -224,6 +223,7 @@ export class HistoryGame {
         const room = this.rooms[connection.roomId];
         room.status = GameStatus.FINISHED;
         clearInterval(room.timerId);
+        room.time = 0;
 
         const vkProfiles = (await vk.api.users.get({
             user_ids: room.users.map((x) => x.vkId),
@@ -262,7 +262,7 @@ export class HistoryGame {
                 gameGif: {
                     dialogId: index,
                     buffer: gif,
-                    vkAttachment: vkDoc,
+                    vkAttachment: vkDoc || "",
                 },
             });
         });
@@ -282,7 +282,9 @@ export class HistoryGame {
 
         room.status = GameStatus.CREATED;
         room.rounds = [];
-
+        clearInterval(room.timerId);
+        delete room.timerId;
+        room.time = 0;
         await prisma.gameRoom.update({
             where: {
                 id: connection.roomId,

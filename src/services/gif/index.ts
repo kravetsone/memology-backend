@@ -17,25 +17,33 @@ export async function createGIF(
     const stream = encoder.createReadStream();
     encoder.setRepeat(0).setDelay(1000).setQuality(1).start();
 
-    await Promise.all(
-        dialog.map(async (msg, index) =>
-            encoder.addFrame(await generateFrame(msg, index, dialog.length)),
-        ),
+    const frames = await Promise.all(
+        dialog.map(async (msg, index) => ({
+            id: index,
+            buffer: await generateFrame(msg, index, dialog.length),
+        })),
     );
-
+    frames.sort((a, b) => a.id - b.id);
+    for (const frame of frames) {
+        encoder.addFrame(frame.buffer);
+    }
     encoder.finish();
 
     const data = await buffer(stream);
-    const doc = await vkUser.upload.wallDocument({
-        group_id: 223365328,
-        title: "history.gif",
-        source: {
-            value: data,
 
-            contentType: "image/gif",
-        },
-    });
+    const doc = await vkUser.upload
+        .wallDocument({
+            group_id: 223365328,
+            title: "history.gif",
+            source: {
+                value: data,
+
+                contentType: "image/gif",
+            },
+        })
+        .then((x) => x.toString())
+        .catch(() => null);
     console.log(doc);
     console.log("end gif encode", Date.now() - time);
-    return [doc.toString(), data] as const;
+    return [doc, data] as const;
 }
