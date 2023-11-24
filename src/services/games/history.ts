@@ -19,9 +19,14 @@ export interface IVKUserData {
     is_closed: boolean;
 }
 
+interface IPlayer {
+    vkId: number;
+}
+
 interface IRoomData {
     status: GameStatus;
-    users: TCustomConnection[];
+    connections: TCustomConnection[];
+    players: IPlayer[];
     time: number;
     timerId?: ReturnType<typeof setInterval>;
     rounds: IUserRound[][];
@@ -39,17 +44,22 @@ export class HistoryGame {
 
         if (!room) {
             this.rooms[connection.roomId] = {
-                users: [connection],
+                connections: [connection],
                 status: GameStatus.CREATED,
+                players: [{ vkId: connection.vkId }],
                 time: 0,
                 rounds: [],
             };
             room = this.rooms[connection.roomId];
-        } else room.users.push(connection);
+        } else {
+            room.connections.push(connection);
+            if (!room.players.find((x) => x.vkId === connection.vkId))
+                room.players.push({ vkId: connection.vkId });
+        }
 
         connection.send({
             lobbyInfo: {
-                users: room.users.map((user) => ({
+                users: room.connections.map((user) => ({
                     vkId: user.vkId,
                     isOwner: user.isOwner,
                 })),
@@ -65,10 +75,12 @@ export class HistoryGame {
         const room = this.rooms[connection.roomId];
         if (!room) return;
 
-        const index = room.users.findIndex((x) => x.vkId === connection.vkId);
+        const index = room.connections.findIndex(
+            (x) => x.vkId === connection.vkId,
+        );
         if (index === -1) return;
 
-        room.users.splice(index, 1);
+        room.connections.splice(index, 1);
 
         this.broadcast(connection, {
             userLeaved: { vkId: connection.vkId, newOwnerVkId },
@@ -79,14 +91,14 @@ export class HistoryGame {
         const room = this.rooms[connection.roomId];
         if (!room) return;
 
-        const index = room.users.findIndex((x) => x.vkId === vkId);
+        const index = room.connections.findIndex((x) => x.vkId === vkId);
         if (index === -1) return;
 
         this.broadcastAll(connection, {
             userLeaved: { vkId },
         });
 
-        const [user] = room.users.splice(index, 1);
+        const [user] = room.connections.splice(index, 1);
 
         user.socket.close();
     }
@@ -97,7 +109,7 @@ export class HistoryGame {
     ) {
         const room = this.rooms[connection.roomId];
 
-        room.users
+        room.connections
             .filter((c) => c.vkId !== connection.vkId)
             .map((x) => x.send(msg));
     }
@@ -108,7 +120,7 @@ export class HistoryGame {
     ) {
         const room = this.rooms[connection.roomId];
 
-        room.users.map((x) => x.send(msg));
+        room.connections.map((x) => x.send(msg));
     }
 
     startGame(connection: TCustomConnection) {
@@ -127,10 +139,10 @@ export class HistoryGame {
 
         console.log(room.rounds);
         //TODO: not on connections. use players count
-        if (room.rounds.length >= room.users.length)
+        if (room.rounds.length >= room.connections.length)
             return this.finishGame(connection);
         if (room.rounds.length) {
-            room.users.forEach((conn) => {
+            room.connections.forEach((conn) => {
                 const round = room.rounds.at(-1)!;
                 const index = round.findIndex(
                     (user) => user.vkId === conn.vkId,
@@ -138,7 +150,7 @@ export class HistoryGame {
                 if (index === -1) return;
 
                 const msgOfAnotherUser = round.at(
-                    (index - 1) % room.users.length,
+                    (index - 1) % room.players.length,
                 );
                 if (!msgOfAnotherUser)
                     return console.error(round, index, room.rounds);
@@ -151,7 +163,11 @@ export class HistoryGame {
             });
         }
         room.rounds.push(
-            room.users.map((x) => ({ vkId: x.vkId, text: "", isReady: false })),
+            room.players.map((x) => ({
+                vkId: x.vkId,
+                text: "",
+                isReady: false,
+            })),
         );
         this.startTimer(connection);
     }
@@ -226,12 +242,12 @@ export class HistoryGame {
         room.time = 0;
 
         const vkProfiles = (await vk.api.users.get({
-            user_ids: room.users.map((x) => x.vkId),
+            user_ids: room.connections.map((x) => x.vkId),
             fields: ["photo_200"],
         })) as unknown as IVKUserData[];
         console.log(room.rounds);
         const dialogs = room.rounds.map((_, index) =>
-            this.getDialogForIndex(room.rounds, index, room.users.length).map(
+            this.getDialogForIndex(room.rounds, index, room.players.length).map(
                 (msg) => {
                     const owner = vkProfiles.find((x) => x.id === msg.vkId)!;
                     return {
