@@ -1,3 +1,5 @@
+import { prisma } from "@db";
+import { MultipartValue } from "@fastify/multipart";
 import { APIError } from "@services/errors";
 import { ErrorCode } from "@services/protobuf";
 import { FastifyZodInstance } from "@types";
@@ -14,22 +16,7 @@ export const post = async (fastify: FastifyZodInstance) => {
         },
         async (req, res) => {
             const files = await req.saveRequestFiles();
-            // const files: MultipartFile[] = [];
-            // const fields: MultipartValue[] = [];
-            // const parts = req.parts();
-            // for await (const part of parts) {
-            //     // console.log(part);
-            //     if (part.type === "file") {
-            //         files.push(part);
-            //     } else fields.push(part);
-            // }
-            // console.log(files);
-            // const { title, description } = bodySchema.parse(
-            //     Object.fromEntries(
-            //         fields.map((field) => [field.fieldname, field.value]),
-            //     ),
-            // );
-            // console.log(title);
+
             console.log(files);
             const image = files.find((x) => x.fieldname === "image");
             if (!image)
@@ -43,18 +30,24 @@ export const post = async (fastify: FastifyZodInstance) => {
                     "/root/memology-backend/files/" + image.filename,
                 ),
             );
+            const { title, description } = image.fields;
+            await prisma.meme.create({
+                data: {
+                    title: (title as MultipartValue).value as string,
+                    description: (description as MultipartValue)
+                        .value as string,
+                    image: "/" + image.filename,
+                    owner: {
+                        connect: {
+                            vkId: +req.vkParams.vk_user_id,
+                        },
+                    },
+                },
+            });
 
-            // await prisma.meme.create({
-            //     data: {
-            //         title: "",
-            //         description: "",
-            //         image: "/" + image.filename,
-            //     },
-            // });
-
-            // return res
-            //     .header("content-type", "application/x-protobuf")
-            //     .send("");
+            return res
+                .header("content-type", "application/x-protobuf")
+                .send("");
         },
     );
 };

@@ -19,11 +19,16 @@ message WebsocketClient {
 
         message NewGame {}
 
+        message ShowDialog {
+            uint32 dialogId = 1;
+        }
+
         KickUser kickUser = 1;
         StartGame startGame = 2;
         SendText sendText = 3;
         SetReady setReady = 4;
         NewGame newGame = 5;
+        ShowDialog showDialog = 6;
     }
 
     HistoryCommand history = 1;
@@ -106,6 +111,10 @@ message WebsocketServer {
 
         message NewGame {}
 
+        message ShowDialog {
+            uint32 dialogId = 1;
+        }
+
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
         LobbyInfo lobbyInfo = 3;
@@ -117,6 +126,7 @@ message WebsocketServer {
         GameGif gameGif = 9;
         optional uint32 readyCounter = 10;
         NewGame newGame = 11;
+        ShowDialog showDialog = 12;
     }
 
     HistoryEvents history = 1;
