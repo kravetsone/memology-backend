@@ -37,6 +37,7 @@ async function registerPlugins(fastify: FastifyZodInstance) {
             const urlParams = querystring.parse(
                 (req.headers["vk-params"] || req.query["vk-params"]) as string,
             );
+
             const signKeys = Object.keys(urlParams).filter((key) =>
                 key.startsWith("vk_"),
             );
@@ -46,7 +47,12 @@ async function registerPlugins(fastify: FastifyZodInstance) {
 
             const stringParams = querystring.stringify(ordered);
             const paramsHash = crypto
-                .createHmac("sha256", config.appSecret)
+                .createHmac(
+                    "sha256",
+                    Number(urlParams.vk_app_id) === 51712852
+                        ? config.appSecret
+                        : config.testAppSecret,
+                )
                 .update(stringParams)
                 .digest()
                 .toString("base64")
@@ -55,6 +61,7 @@ async function registerPlugins(fastify: FastifyZodInstance) {
                 .replace(/=$/, "");
 
             req.vkParams = urlParams as unknown as IVKParams;
+
             if (paramsHash !== req.vkParams.sign)
                 throw new APIError(
                     ErrorCode.NO_AUTH,
