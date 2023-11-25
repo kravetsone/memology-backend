@@ -23,12 +23,17 @@ message WebsocketClient {
             uint32 dialogId = 1;
         }
 
+        message SetCallData {
+            optional string link = 1;
+        }
+
         KickUser kickUser = 1;
         StartGame startGame = 2;
         SendText sendText = 3;
         SetReady setReady = 4;
         NewGame newGame = 5;
         ShowDialog showDialog = 6;
+        SetCallData setCallData = 7;
     }
 
     HistoryCommand history = 1;
@@ -68,6 +73,7 @@ message WebsocketServer {
 
         message LobbyInfo {
             repeated LobbyUser users =  1;
+            optional string callLink = 2;
         }
         
         message ShowSnackbar {
@@ -115,6 +121,10 @@ message WebsocketServer {
             uint32 dialogId = 1;
         }
 
+        message CallData {
+            optional string link = 1;
+        }
+
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
         LobbyInfo lobbyInfo = 3;
@@ -127,6 +137,7 @@ message WebsocketServer {
         optional uint32 readyCounter = 10;
         NewGame newGame = 11;
         ShowDialog showDialog = 12;
+        CallData callData = 13;
     }
 
     HistoryEvents history = 1;

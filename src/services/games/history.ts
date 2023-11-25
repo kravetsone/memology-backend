@@ -30,6 +30,7 @@ interface IRoomData {
     time: number;
     timerId?: ReturnType<typeof setInterval>;
     rounds: IUserRound[][];
+    callLink?: string;
 }
 
 export class HistoryGame {
@@ -63,6 +64,7 @@ export class HistoryGame {
                     vkId: user.vkId,
                     isOwner: user.isOwner,
                 })),
+                callLink: room.callLink,
             },
         });
 
@@ -242,7 +244,7 @@ export class HistoryGame {
         room.time = 0;
 
         const vkProfiles = (await vk.api.users.get({
-            user_ids: room.connections.map((x) => x.vkId),
+            user_ids: room.players.map((x) => x.vkId),
             fields: ["photo_200"],
         })) as unknown as IVKUserData[];
         console.log(room.rounds);
@@ -312,6 +314,17 @@ export class HistoryGame {
 
         this.broadcastAll(connection, {
             newGame: {},
+        });
+    }
+
+    startCall(connection: TCustomConnection, link?: string) {
+        const room = this.rooms[connection.roomId];
+        room.callLink = link;
+
+        this.broadcast(connection, {
+            callData: {
+                link,
+            },
         });
     }
 }
