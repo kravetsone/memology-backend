@@ -14,7 +14,11 @@ export const get = async (fastify: FastifyZodInstance) => {
             const { id } = req.params;
 
             const meme = await prisma.meme.get(id, +req.vkParams.vk_user_id);
-            if (!meme)
+            if (
+                !meme ||
+                (meme.isSuggest &&
+                    Number(meme.owner.vkId) !== +req.vkParams.vk_user_id)
+            )
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
                     "Этого мема не существует",
@@ -40,9 +44,9 @@ export const get = async (fastify: FastifyZodInstance) => {
                     )?.index,
                     mark: meme.inLikes.length
                         ? Mark.LIKE
-                        : (meme.inDislikes.length
+                        : meme.inDislikes.length
                           ? Mark.DISLIKE
-                          : undefined),
+                          : undefined,
                 }),
             );
         },
