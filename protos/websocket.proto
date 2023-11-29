@@ -27,6 +27,10 @@ message WebsocketClient {
             optional string link = 1;
         }
 
+        message ChangeSettings {
+            uint32 roundTime = 1;
+        }
+
         KickUser kickUser = 1;
         StartGame startGame = 2;
         SendText sendText = 3;
@@ -34,6 +38,7 @@ message WebsocketClient {
         NewGame newGame = 5;
         ShowDialog showDialog = 6;
         SetCallData setCallData = 7;
+        ChangeSettings changeSettings = 8;
     }
 
     HistoryCommand history = 1;
@@ -72,8 +77,13 @@ message WebsocketServer {
         }
 
         message LobbyInfo {
+            message Settings {
+                uint32 roundTime = 1;
+            }
+
             repeated LobbyUser users =  1;
             optional string callLink = 2;
+            Settings settings = 3;
         }
         
         message ShowSnackbar {
@@ -125,6 +135,10 @@ message WebsocketServer {
             optional string link = 1;
         }
 
+        message SettingsUpdate {
+            uint32 roundTime = 1;
+        }
+
         UserJoined userJoined = 1;
         UserLeaved userLeaved = 2;
         LobbyInfo lobbyInfo = 3;
@@ -138,6 +152,7 @@ message WebsocketServer {
         NewGame newGame = 11;
         ShowDialog showDialog = 12;
         CallData callData = 13;
+        SettingsUpdate settingsUpdate = 14;
     }
 
     HistoryEvents history = 1;

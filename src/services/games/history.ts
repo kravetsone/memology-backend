@@ -2,7 +2,11 @@ import { prisma } from "@db";
 import { GameStatus } from "@prisma/client";
 import { createGIF } from "@services/gif";
 import { TCustomConnection } from "@types";
-import { vk, WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
+import {
+    vk,
+    WebsocketClient,
+    WebsocketServer_HistoryEvents_FinishGame_Msg,
+} from "..";
 
 export interface IUserRound {
     vkId: number;
@@ -31,6 +35,11 @@ interface IRoomData {
     timerId?: ReturnType<typeof setInterval>;
     rounds: IUserRound[][];
     callLink?: string;
+    settings: ISettings;
+}
+
+interface ISettings {
+    roundTime: number;
 }
 
 export class HistoryGame {
@@ -50,6 +59,9 @@ export class HistoryGame {
                 players: [{ vkId: connection.vkId }],
                 time: 0,
                 rounds: [],
+                settings: {
+                    roundTime: 15,
+                },
             };
             room = this.rooms[connection.roomId];
         } else {
@@ -65,6 +77,7 @@ export class HistoryGame {
                     isOwner: user.isOwner,
                 })),
                 callLink: room.callLink,
+                settings: room.settings,
             },
         });
 
@@ -82,7 +95,8 @@ export class HistoryGame {
         );
         if (index === -1) return;
 
-        room.connections.splice(index, 1);
+        if (room.status !== GameStatus.STARTED)
+            room.connections.splice(index, 1);
 
         this.broadcast(connection, {
             userLeaved: { vkId: connection.vkId, newOwnerVkId },
@@ -144,10 +158,10 @@ export class HistoryGame {
         if (room.rounds.length >= room.connections.length)
             return this.finishGame(connection);
         if (room.rounds.length) {
-            room.connections.forEach((conn) => {
+            room.players.forEach((player) => {
                 const round = room.rounds.at(-1)!;
                 const index = round.findIndex(
-                    (user) => user.vkId === conn.vkId,
+                    (user) => user.vkId === player.vkId,
                 );
                 if (index === -1) return;
 
@@ -156,6 +170,11 @@ export class HistoryGame {
                 );
                 if (!msgOfAnotherUser)
                     return console.error(round, index, room.rounds);
+
+                const conn = room.connections.find(
+                    (x) => x.vkId === player.vkId,
+                );
+                if (!conn) return;
 
                 conn.send({
                     nextStep: {
@@ -177,7 +196,7 @@ export class HistoryGame {
     startTimer(connection: TCustomConnection) {
         const room = this.rooms[connection.roomId];
         if (room.time) return;
-        room.time = 15;
+        room.time = room.settings.roundTime;
 
         room.timerId = setInterval(() => {
             room.time -= 1;
@@ -193,6 +212,20 @@ export class HistoryGame {
                     },
                 });
         }, 1000);
+    }
+
+    setSettings(
+        connection: TCustomConnection,
+        settings: NonNullable<
+            NonNullable<WebsocketClient["history"]>["changeSettings"]
+        >,
+    ) {
+        const room = this.rooms[connection.roomId];
+        room.settings.roundTime = settings.roundTime;
+
+        this.broadcastAll(connection, {
+            settingsUpdate: room.settings,
+        });
     }
 
     handleReady(connection: TCustomConnection, text: string) {
