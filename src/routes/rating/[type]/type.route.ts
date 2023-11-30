@@ -64,6 +64,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                             inFavorites: true,
                             inLikes: true,
                             inDislikes: true,
+                            comments: true,
                         },
                     },
                 },
@@ -81,9 +82,10 @@ export const get = async (fastify: FastifyZodInstance) => {
                         favoritesCount: meme._count.inFavorites,
                         isFavorites: !!meme.inFavorites.length,
                         likesCount: meme.likesCount,
+                        commentsCount: meme._count.comments,
                     })),
-                })
+                }),
             );
-        }
+        },
     );
 };

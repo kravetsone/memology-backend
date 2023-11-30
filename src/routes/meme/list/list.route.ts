@@ -27,12 +27,13 @@ export const get = async (fastify: FastifyZodInstance) => {
                         description: meme.description ?? undefined,
                         image: meme.image,
                         favoritesCount: meme._count.inFavorites,
+                        commentsCount: meme._count.comments,
                         isFavorites: !!meme.inFavorites.length,
                         likesCount: meme.likesCount,
                         isSuggest: meme.isSuggest,
                     })),
-                })
+                }),
             );
-        }
+        },
     );
 };

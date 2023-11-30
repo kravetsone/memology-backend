@@ -10,6 +10,7 @@ message MemeRatingResponse {
         bool isFavorites = 6;
         int32 likesCount = 7;
         uint32 place = 8;
+        uint32 commentsCount = 9;
     }
 
     

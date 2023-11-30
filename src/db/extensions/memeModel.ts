@@ -219,6 +219,7 @@ export const memeModelExtension = {
                         _count: {
                             select: {
                                 inFavorites: true,
+                                comments: true,
                             },
                         },
                     },

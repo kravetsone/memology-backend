@@ -40,6 +40,9 @@ export const get = async (fastify: FastifyZodInstance) => {
             const userIds = comments.map((x) => x.user.vkId);
 
             const { inLikes, inDislikes } = await prisma.meme.findFirstOrThrow({
+                where: {
+                    id: req.params.id,
+                },
                 select: {
                     inLikes: {
                         where: {
