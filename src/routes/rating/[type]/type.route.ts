@@ -27,9 +27,14 @@ export const get = async (fastify: FastifyZodInstance) => {
                           }
                         : {}),
                 },
-                orderBy: {
-                    likesCount: "desc",
-                },
+                orderBy: [
+                    {
+                        likesCount: "desc",
+                    },
+                    {
+                        id: "desc",
+                    },
+                ],
                 skip: (+page - 1) * +pageSize,
                 take: pageSize,
                 select: {

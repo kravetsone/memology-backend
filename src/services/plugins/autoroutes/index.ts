@@ -11,7 +11,6 @@ async function registerAutoroutes(fastify: FastifyZodInstance) {
             if (route.includes("ignore")) return;
             const file = await import(route);
             const endpoint = Object.values(file).at(0);
-            console.log(route);
 
             await fastify.register(endpoint as TRoute, {
                 prefix:

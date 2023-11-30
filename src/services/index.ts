@@ -1,5 +1,3 @@
-import "./scheduler";
-
 export * from "./errors";
 export * from "./games";
 export * from "./gif";
