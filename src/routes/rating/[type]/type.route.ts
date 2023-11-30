@@ -1,5 +1,5 @@
 import { prisma } from "@db";
-import { MemeRatingResponse } from "@services";
+import { Mark, MemeRatingResponse } from "@services";
 import { FastifyZodInstance, RatingType } from "@types";
 import { DateTime } from "luxon";
 import { schema } from "./type.schema";
@@ -88,6 +88,11 @@ export const get = async (fastify: FastifyZodInstance) => {
                         isFavorites: !!meme.inFavorites.length,
                         likesCount: meme.likesCount,
                         commentsCount: meme._count.comments,
+                        mark: meme.inLikes.length
+                            ? Mark.LIKE
+                            : (meme.inDislikes.length
+                              ? Mark.DISLIKE
+                              : undefined),
                     })),
                 }),
             );

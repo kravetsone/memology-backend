@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import public "meme.proto";
+
 message MemeRatingResponse {
     message MemeItem {
         uint32 id = 1;
@@ -11,6 +13,7 @@ message MemeRatingResponse {
         int32 likesCount = 7;
         uint32 place = 8;
         uint32 commentsCount = 9;
+        optional Mark mark = 10;
     }
 
     
