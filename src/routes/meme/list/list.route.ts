@@ -1,5 +1,5 @@
 import { prisma } from "@db";
-import { MemeListResponse } from "@services/protobuf/meme";
+import { MemeListResponse } from "@services";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./list.schema";
 
@@ -29,9 +29,10 @@ export const get = async (fastify: FastifyZodInstance) => {
                         favoritesCount: meme._count.inFavorites,
                         isFavorites: !!meme.inFavorites.length,
                         likesCount: meme.likesCount,
+                        isSuggest: meme.isSuggest,
                     })),
-                }),
+                })
             );
-        },
+        }
     );
 };

@@ -1,5 +1,5 @@
 import { SocketStream } from "@fastify/websocket";
-import { WebsocketServer } from "@services/protobuf";
+import { WebsocketServer } from "@services";
 import {
     FastifyBaseLogger,
     FastifyInstance,
@@ -28,7 +28,7 @@ declare module "fastify" {
     interface FastifyInstance {
         auth: (
             getUser?: boolean,
-            countNotify?: boolean,
+            countNotify?: boolean
         ) => (req: FastifyRequest, res: FastifyReply) => void;
     }
     interface FastifyRequest {

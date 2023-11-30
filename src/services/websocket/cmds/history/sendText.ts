@@ -1,5 +1,4 @@
-import { historyGame } from "@services/games/history";
-import { SocketCommand } from "@services/websocket/core";
+import { historyGame, SocketCommand } from "@services";
 
 export const sendTextCommand = new SocketCommand({
     game: "history",

@@ -1,5 +1,5 @@
 import { prisma } from "@db";
-import { UserResponse_UserItem } from "@services/protobuf/user";
+import { UserResponse_UserItem } from "@services";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./user.schema";
 
@@ -20,8 +20,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                     dislikesCount: user._count.dislikes,
                     favoritesCount: user._count.favorites,
                     suggestMemesCount: user._count.memes,
-                }),
+                })
             );
-        },
+        }
     );
 };

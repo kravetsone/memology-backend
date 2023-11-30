@@ -8,6 +8,7 @@ message MemeItem {
     uint32 favoritesCount = 5;
     bool isFavorites = 6;
     int32 likesCount = 7;
+    bool isSuggest = 8;
 }
 
 message MemeListResponse {

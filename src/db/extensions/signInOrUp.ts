@@ -1,5 +1,5 @@
-import { prisma } from "@db/prisma";
-import { vk } from "@services/vk-io";
+import { prisma } from "@db";
+import { vk } from "@services";
 
 export const signInOrUpExtension = {
     model: {

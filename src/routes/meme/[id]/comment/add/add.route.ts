@@ -1,5 +1,5 @@
 import { prisma } from "@db";
-import { APIError, ErrorCode } from "@services/errors";
+import { APIError, ErrorCode } from "@services";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./add.schema";
 
@@ -18,7 +18,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             if (!meme)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этого мема не существует",
+                    "Этого мема не существует"
                 );
 
             await prisma.comment.create({
@@ -38,6 +38,6 @@ export const get = async (fastify: FastifyZodInstance) => {
             });
 
             return res.header("content-type", "application/x-protobuf").send();
-        },
+        }
     );
 };

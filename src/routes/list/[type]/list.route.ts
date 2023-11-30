@@ -1,5 +1,5 @@
 import { prisma } from "@db";
-import { MemeListResponse } from "@services/protobuf/meme";
+import { MemeListResponse } from "@services";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./list.schema";
 
@@ -44,6 +44,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                         title: true,
                         image: true,
                         likesCount: true,
+                        isSuggest: true,
                         inFavorites: {
                             where: {
                                 user: {
@@ -58,7 +59,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                         },
                     },
                 });
-
+                console.log(memes);
                 return res
                     .header("content-type", "application/x-protobuf")
                     .send(
@@ -72,6 +73,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                                 favoritesCount: meme._count.inFavorites,
                                 isFavorites: !!meme.inFavorites,
                                 likesCount: meme.likesCount,
+                                isSuggest: meme.isSuggest,
                             })),
                         }),
                     );
@@ -115,6 +117,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                                 title: true,
                                 image: true,
                                 likesCount: true,
+                                isSuggest: true,
                                 inFavorites: {
                                     where: {
                                         user: {
@@ -143,6 +146,7 @@ export const get = async (fastify: FastifyZodInstance) => {
                         favoritesCount: meme._count.inFavorites,
                         isFavorites: !!meme.inFavorites,
                         likesCount: meme.likesCount,
+                        isSuggest: meme.isSuggest,
                     })),
                 }),
             );

@@ -1,9 +1,9 @@
-import { WebsocketClient } from "@services/protobuf";
+import { WebsocketClient } from "@services";
 import { TCustomConnection } from "@types";
 
 export type TSocketHandler<D> = (
     connection: TCustomConnection,
-    message: D,
+    message: D
 ) => unknown;
 
 export class SocketCommand<

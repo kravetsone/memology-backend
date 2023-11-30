@@ -1,6 +1,6 @@
-import { ErrorCode, ErrorItem, ErrorResponse } from "../protobuf";
+import { ErrorCode, ErrorItem, ErrorResponse } from "../protobuf/error";
 
-export { ErrorCode } from "../protobuf";
+export { ErrorCode } from "../protobuf/error";
 
 const defaultMessages: Record<ErrorCode, string> = {
     [ErrorCode.SERVER_ERROR]: "",
@@ -9,6 +9,7 @@ const defaultMessages: Record<ErrorCode, string> = {
     [ErrorCode.NO_AUTH]: "Вы не авторизовались",
     [ErrorCode.NOT_EXISTS]: "Не существует",
     [ErrorCode.GAME_STARTED]: "Игра уже началась",
+    [ErrorCode.NOT_OWNER]: "Вы не владелец",
 };
 
 const statuses: Record<ErrorCode, number> = {
@@ -18,6 +19,7 @@ const statuses: Record<ErrorCode, number> = {
     [ErrorCode.NO_AUTH]: 401,
     [ErrorCode.NOT_EXISTS]: 400,
     [ErrorCode.GAME_STARTED]: 400,
+    [ErrorCode.NOT_OWNER]: 400,
 };
 
 export class APIError extends Error {

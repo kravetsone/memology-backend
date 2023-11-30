@@ -1,6 +1,5 @@
 import { prisma } from "@db";
-import { CommentsResponse_CommentsListResponse } from "@services/protobuf/comment";
-import { Mark } from "@services/protobuf/meme";
+import { CommentsResponse_CommentsListResponse, Mark } from "@services";
 import { FastifyZodInstance } from "@types";
 import { DateTime } from "luxon";
 import { schema } from "./list.schema";
@@ -72,19 +71,19 @@ export const get = async (fastify: FastifyZodInstance) => {
                         text: comment.text,
                         vkId: Number(comment.user.vkId),
                         createdAt: DateTime.fromJSDate(
-                            comment.createdAt,
+                            comment.createdAt
                         ).toUnixInteger(),
                         likesCount: 0,
                         mark: inLikes.find((x) => x.userId === comment.user.id)
                             ? Mark.LIKE
                             : inDislikes.find(
-                                    (x) => x.userId === comment.user.id,
+                                    (x) => x.userId === comment.user.id
                                 )
                               ? Mark.DISLIKE
                               : undefined,
                     })),
-                }),
+                })
             );
-        },
+        }
     );
 };

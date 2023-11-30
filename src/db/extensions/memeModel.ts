@@ -208,6 +208,7 @@ export const memeModelExtension = {
                         title: true,
                         image: true,
                         likesCount: true,
+                        isSuggest: true,
                         inFavorites: {
                             where: {
                                 user: {

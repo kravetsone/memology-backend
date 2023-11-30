@@ -1,5 +1,5 @@
 import { prisma } from "@db";
-import { MemeRatingResponse } from "@services/protobuf/rating";
+import { MemeRatingResponse } from "@services";
 import { FastifyZodInstance, RatingType } from "@types";
 import { DateTime } from "luxon";
 import { schema } from "./type.schema";
@@ -82,8 +82,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                         isFavorites: !!meme.inFavorites.length,
                         likesCount: meme.likesCount,
                     })),
-                }),
+                })
             );
-        },
+        }
     );
 };

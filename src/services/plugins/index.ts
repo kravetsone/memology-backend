@@ -1,6 +1,5 @@
 import { config } from "@config";
-import { ErrorCode, websocketPlugin } from "@services";
-import { APIError } from "@services/errors";
+import { APIError, ErrorCode, websocketPlugin } from "@services";
 import { FastifyZodInstance, IVKParams } from "@types";
 import { FastifyRequest } from "fastify";
 import fastifyPlugin from "fastify-plugin";
@@ -23,7 +22,7 @@ async function registerPlugins(fastify: FastifyZodInstance) {
     fastify.addHook(
         "preHandler",
         async (
-            req: FastifyRequest<{ Querystring: { "vk-params": IVKParams } }>,
+            req: FastifyRequest<{ Querystring: { "vk-params": IVKParams } }>
         ) => {
             console.log(`[${req.method}]`, req.url, req.body || req.query);
 
@@ -31,15 +30,15 @@ async function registerPlugins(fastify: FastifyZodInstance) {
             if (!req.headers["vk-params"] && !req.query["vk-params"])
                 throw new APIError(
                     ErrorCode.NO_AUTH,
-                    "Строка авторизации некорректна",
+                    "Строка авторизации некорректна"
                 );
 
             const urlParams = querystring.parse(
-                (req.headers["vk-params"] || req.query["vk-params"]) as string,
+                (req.headers["vk-params"] || req.query["vk-params"]) as string
             );
 
             const signKeys = Object.keys(urlParams).filter((key) =>
-                key.startsWith("vk_"),
+                key.startsWith("vk_")
             );
             const ordered = {};
 
@@ -51,7 +50,7 @@ async function registerPlugins(fastify: FastifyZodInstance) {
                     "sha256",
                     Number(urlParams.vk_app_id) === 51712852
                         ? config.appSecret
-                        : config.testAppSecret,
+                        : config.testAppSecret
                 )
                 .update(stringParams)
                 .digest()
@@ -65,9 +64,9 @@ async function registerPlugins(fastify: FastifyZodInstance) {
             if (paramsHash !== req.vkParams.sign)
                 throw new APIError(
                     ErrorCode.NO_AUTH,
-                    "Строка авторизации некорректна",
+                    "Строка авторизации некорректна"
                 );
-        },
+        }
     );
 
     await fastify.register(websocketPlugin);

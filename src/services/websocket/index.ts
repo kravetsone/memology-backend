@@ -1,9 +1,11 @@
 import fastifyWebSocket from "@fastify/websocket";
-import { WebsocketClient, WebsocketServer } from "@services/protobuf";
+import { WebsocketClient, WebsocketServer } from "@services";
 import { FastifyZodInstance, TCustomConnection } from "@types";
 import fastifyPlugin from "fastify-plugin";
 import { z } from "zod";
 import { SocketManager } from "./core";
+
+export * from "./core";
 
 const socketManager = new SocketManager();
 
@@ -23,7 +25,7 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
                 console.log("disconnection");
                 const disconnectionCommand = socketManager.getCommand(
                     "history",
-                    "disconnection",
+                    "disconnection"
                 );
                 if (!disconnectionCommand) return connection.socket.close();
 
@@ -32,7 +34,7 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
 
             connection.socket.on("message", async (msg) => {
                 const commandMsg = WebsocketClient.fromBinary(
-                    new Uint8Array(msg as ArrayBuffer),
+                    new Uint8Array(msg as ArrayBuffer)
                 );
                 console.log(commandMsg);
                 const gameName = Object.keys(commandMsg).at(0)!;
@@ -43,12 +45,12 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
 
                 await command.handler(
                     connection,
-                    commandMsg[gameName][commandName],
+                    commandMsg[gameName][commandName]
                 );
             });
             const connectionCommand = socketManager.getCommand(
                 req.params.game,
-                "connection",
+                "connection"
             );
             if (!connectionCommand) return connection.socket.close();
 
@@ -56,13 +58,13 @@ async function registerWebSocket(fastify: FastifyZodInstance) {
                 connection.socket.send(
                     WebsocketServer.toBinary({
                         [req.params.game]: msg,
-                    }),
+                    })
                 );
             connection.vkId = +req.vkParams.vk_user_id;
             connection.roomId = req.params.roomId;
 
             await connectionCommand.handler(connection, null);
-        },
+        }
     );
 }
 

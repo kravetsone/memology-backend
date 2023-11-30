@@ -1,12 +1,12 @@
 import { prisma } from "@db";
 import { GameStatus } from "@prisma/client";
-import { createGIF } from "@services/gif";
-import { TCustomConnection } from "@types";
 import {
+    createGIF,
     vk,
     WebsocketClient,
     WebsocketServer_HistoryEvents_FinishGame_Msg,
-} from "..";
+} from "@services";
+import { TCustomConnection } from "@types";
 
 export interface IUserRound {
     vkId: number;
@@ -101,6 +101,8 @@ export class HistoryGame {
         this.broadcast(connection, {
             userLeaved: { vkId: connection.vkId, newOwnerVkId },
         });
+
+        if (room.status === GameStatus.FINISHED) this.startNewGame(connection);
     }
 
     kickUser(connection: TCustomConnection, vkId: number) {

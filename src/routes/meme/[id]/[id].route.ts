@@ -1,6 +1,5 @@
 import { prisma, RatingType } from "@db";
-import { APIError, ErrorCode } from "@services/errors";
-import { Mark, MemeResponse } from "@services/protobuf/meme";
+import { APIError, ErrorCode, Mark, MemeResponse } from "@services";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./[id].schema";
 
@@ -21,7 +20,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             )
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этого мема не существует",
+                    "Этого мема не существует"
                 );
             console.log(meme);
 
@@ -37,18 +36,18 @@ export const get = async (fastify: FastifyZodInstance) => {
                     commentsCount: meme._count.comments,
                     ownerId: Number(meme.owner.vkId),
                     placeInEternalRating: meme.positionInRating.find(
-                        (x) => x.type === RatingType.ETERNAL,
+                        (x) => x.type === RatingType.ETERNAL
                     )?.index,
                     placeInWeeklyRating: meme.positionInRating.find(
-                        (x) => x.type === RatingType.WEEKLY,
+                        (x) => x.type === RatingType.WEEKLY
                     )?.index,
                     mark: meme.inLikes.length
                         ? Mark.LIKE
                         : meme.inDislikes.length
                           ? Mark.DISLIKE
                           : undefined,
-                }),
+                })
             );
-        },
+        }
     );
 };

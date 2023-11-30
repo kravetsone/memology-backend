@@ -1,6 +1,6 @@
 import { GameStatus, prisma } from "@db";
+import { GetRoomInfoResponse } from "@services";
 import { APIError, ErrorCode } from "@services/errors";
-import { GetRoomInfoResponse } from "@services/protobuf";
 import { FastifyZodInstance } from "@types";
 import { schema } from "./[roomId].schema";
 
@@ -28,7 +28,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             if (!room)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Это лобби не существует",
+                    "Это лобби не существует"
                 );
             if (room.status !== GameStatus.CREATED)
                 throw new APIError(ErrorCode.GAME_STARTED);
@@ -37,8 +37,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                 GetRoomInfoResponse.toBinary({
                     roomId: room.id,
                     ownerVkId: Number(room.owner.vkId),
-                }),
+                })
             );
-        },
+        }
     );
 };
