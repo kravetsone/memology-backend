@@ -5,7 +5,7 @@ import { vkUser, WebsocketServer_HistoryEvents_FinishGame_Msg } from "..";
 import { generateFrame } from "./generateFrame";
 
 FontLibrary.use([
-    "/root/memology-backend/files/Inter-VariableFont_slnt,wght.ttf",
+    process.cwd() + "/files/static/Inter-VariableFont_slnt,wght.ttf",
 ]);
 
 export async function createGIF(

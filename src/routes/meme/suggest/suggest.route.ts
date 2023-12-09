@@ -43,7 +43,7 @@ export const post = async (fastify: FastifyZodInstance) => {
                     await pipeline(
                         part.file,
                         fs.createWriteStream(
-                            "/root/memology-backend/files/memes/" + fileName,
+                            process.cwd() + "/files/memes/" + fileName,
                         ),
                     );
                     memeData.image = fileName;

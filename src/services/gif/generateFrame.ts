@@ -18,7 +18,7 @@ export async function generateFrame(
     const ctx = canvas.getContext("2d");
 
     ctx.drawImage(
-        await loadImage("/root/memology-backend/files/gif_frame_template.png"),
+        await loadImage(process.cwd() + "/files/static/gif_frame_template.png"),
         0,
         0,
     );

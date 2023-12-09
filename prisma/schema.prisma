@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://root:seva23092005@localhost:5432/memology?schema=public"
+  url      = env("DATABASE_URL")
 }
 
 model User {
