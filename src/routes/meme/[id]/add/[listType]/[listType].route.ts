@@ -45,7 +45,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             if (!meme)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этого мема не существует"
+                    "Этого мема не существует",
                 );
 
             await prisma.meme.addTo(listType, {
@@ -58,6 +58,6 @@ export const get = async (fastify: FastifyZodInstance) => {
             });
 
             return res.header("content-type", "application/x-protobuf").send();
-        }
+        },
     );
 };

@@ -43,8 +43,8 @@ export const post = async (fastify: FastifyZodInstance) => {
                     await pipeline(
                         part.file,
                         fs.createWriteStream(
-                            "/root/memology-backend/files/memes/" + fileName
-                        )
+                            "/root/memology-backend/files/memes/" + fileName,
+                        ),
                     );
                     memeData.image = fileName;
                 }
@@ -59,7 +59,7 @@ export const post = async (fastify: FastifyZodInstance) => {
             if (!memeData.description || !memeData.title || !memeData.image)
                 throw new APIError(
                     ErrorCode.UPLOAD_ERROR,
-                    "Вы не заполнили все поля"
+                    "Вы не заполнили все поля",
                 );
 
             await prisma.meme.create({
@@ -78,6 +78,6 @@ export const post = async (fastify: FastifyZodInstance) => {
             return res
                 .header("content-type", "application/x-protobuf")
                 .send("");
-        }
+        },
     );
 };

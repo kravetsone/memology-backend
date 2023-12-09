@@ -27,12 +27,12 @@ export const deleteMeme = async (fastify: FastifyZodInstance) => {
             if (!meme)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Этот мем не существует"
+                    "Этот мем не существует",
                 );
             if (Number(meme.owner.vkId) !== +req.vkParams.vk_user_id)
                 throw new APIError(
                     ErrorCode.NOT_OWNER,
-                    "Вы не владелец этого мема"
+                    "Вы не владелец этого мема",
                 );
 
             await prisma.meme.delete({
@@ -42,6 +42,6 @@ export const deleteMeme = async (fastify: FastifyZodInstance) => {
             });
 
             return res.header("content-type", "application/x-protobuf").send();
-        }
+        },
     );
 };

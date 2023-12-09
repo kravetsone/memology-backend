@@ -28,7 +28,7 @@ export const get = async (fastify: FastifyZodInstance) => {
             if (!room)
                 throw new APIError(
                     ErrorCode.NOT_EXISTS,
-                    "Это лобби не существует"
+                    "Это лобби не существует",
                 );
             if (room.status !== GameStatus.CREATED)
                 throw new APIError(ErrorCode.GAME_STARTED);
@@ -37,8 +37,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                 GetRoomInfoResponse.toBinary({
                     roomId: room.id,
                     ownerVkId: Number(room.owner.vkId),
-                })
+                }),
             );
-        }
+        },
     );
 };

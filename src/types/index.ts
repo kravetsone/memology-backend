@@ -28,7 +28,7 @@ declare module "fastify" {
     interface FastifyInstance {
         auth: (
             getUser?: boolean,
-            countNotify?: boolean
+            countNotify?: boolean,
         ) => (req: FastifyRequest, res: FastifyReply) => void;
     }
     interface FastifyRequest {

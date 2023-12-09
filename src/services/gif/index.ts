@@ -9,7 +9,7 @@ FontLibrary.use([
 ]);
 
 export async function createGIF(
-    dialog: WebsocketServer_HistoryEvents_FinishGame_Msg[]
+    dialog: WebsocketServer_HistoryEvents_FinishGame_Msg[],
 ) {
     const time = Date.now();
     console.log("start gif encode");
@@ -21,7 +21,7 @@ export async function createGIF(
         dialog.map(async (msg, index) => ({
             id: index,
             buffer: await generateFrame(msg, index, dialog.length),
-        }))
+        })),
     );
     frames.sort((a, b) => a.id - b.id);
     for (const frame of frames) {

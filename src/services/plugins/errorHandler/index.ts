@@ -24,7 +24,7 @@ async function registerErrorHandler(fastify: FastifyZodInstance) {
                         message: error.message,
                         errors: [],
                         params: {},
-                    })
+                    }),
                 );
         console.error("err:", error);
         if (error?.validation?.length) {
@@ -42,7 +42,7 @@ async function registerErrorHandler(fastify: FastifyZodInstance) {
                             path: err.schemaPath,
                         })),
                         params: {},
-                    })
+                    }),
                 );
         }
         console.error(error);
@@ -56,7 +56,7 @@ async function registerErrorHandler(fastify: FastifyZodInstance) {
                         "На сервере произошла техническая ошибка. Попробуйте позже",
                     errors: [],
                     params: {},
-                })
+                }),
             );
     });
 }

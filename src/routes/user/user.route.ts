@@ -20,8 +20,8 @@ export const get = async (fastify: FastifyZodInstance) => {
                     dislikesCount: user._count.dislikes,
                     favoritesCount: user._count.favorites,
                     suggestMemesCount: user._count.memes,
-                })
+                }),
             );
-        }
+        },
     );
 };

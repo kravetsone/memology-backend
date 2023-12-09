@@ -74,19 +74,19 @@ export const get = async (fastify: FastifyZodInstance) => {
                         text: comment.text,
                         vkId: Number(comment.user.vkId),
                         createdAt: DateTime.fromJSDate(
-                            comment.createdAt
+                            comment.createdAt,
                         ).toUnixInteger(),
                         likesCount: 0,
                         mark: inLikes.find((x) => x.userId === comment.user.id)
                             ? Mark.LIKE
                             : inDislikes.find(
-                                    (x) => x.userId === comment.user.id
+                                    (x) => x.userId === comment.user.id,
                                 )
                               ? Mark.DISLIKE
                               : undefined,
                     })),
-                })
+                }),
             );
-        }
+        },
     );
 };
